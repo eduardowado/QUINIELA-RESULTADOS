@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Participante de Quiniela</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 95%;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+        #btn-logout {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        /* --- Login --- */
+        #login-screen {
+            padding: 30px;
+            text-align: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            margin-top: 50px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #login-screen h2 {
+            margin-top: 0;
+            color: #34495e;
+        }
+        #main-content {
+            display: none;
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button {
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button.btn-primary { background-color: #3498db; color: white; }
+        button.btn-primary:hover { background-color: #2980b9; }
+        
+        /* --- Pestañas --- */
+        .tab-nav {
+            display: flex;
+            background-color: #ecf0f1;
+            overflow-x: auto;
+        }
+        .tab-button {
+            padding: 14px 15px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #7f8c8d;
+            font-size: 0.85em; 
+            font-weight: 700;
+            flex-grow: 1;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        .tab-button.active {
+            color: #34495e;
+            border-bottom: 3px solid #3498db;
+        }
+        .tab-content {
+            display: none;
+            padding: 25px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* --- Estilos de Tablas --- */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            min-width: 700px; 
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f4f6f8;
+            color: #34495e;
+            font-weight: 700;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Estilos para "Resultados de Todos" (Excel) */
+        #resultados-publicos-tabla th {
+            font-size: 0.8em;
+            padding: 8px 5px;
+        }
+        #resultados-publicos-tabla td {
+            font-size: 0.85em;
+            padding: 6px 5px;
+        }
+        #resultados-publicos-tabla .th-partido {
+            background-color: #34495e;
+            color: white;
+            min-width: 150px;
+        }
+        #resultados-publicos-tabla .th-marcador-real {
+            background-color: #f4f6f8;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+        #resultados-publicos-tabla .td-jugador {
+            text-align: left;
+            font-weight: 700;
+            min-width: 120px;
+        }
+        #resultados-publicos-tabla .td-puntos {
+            font-weight: 700;
+            background-color: #ecf0f1;
+        }
+        #resultados-publicos-tabla .td-total-puntos {
+            font-weight: 700;
+            font-size: 1.1em;
+            background-color: #3498db;
+            color: white;
+        }
+
+
+        /* Estilos para "Saldos" */
+        .saldos-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .saldo-card {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .saldo-card h3 {
+            margin: 0 0 10px 0;
+            color: #34495e;
+        }
+        .saldo-card .valor {
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .saldo-card .valor.debe { color: #e74c3c; }
+        .saldo-card .valor.pagado { color: #2ecc71; }
+        .saldo-card .valor.disponible { color: #3498db; }
+        
+        /* Loader y Mensajes */
+        #loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: 500;
+            color: #3498db;
+        }
+        #mensaje-login {
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+        }
+        #mensaje-login.error { background-color: #f8d7da; color: #721c24; }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                padding: 0;
+            }
+            .admin-panel {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            .tab-nav {
+                font-size: 0.8em;
+            }
+            .tab-button {
+                padding: 12px 10px;
+            }
+            .tab-content {
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 1.2em;
+            }
+            .saldos-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="login-screen">
+            <h2>Panel de Participante</h2>
+            <p>Ingresa tu código de temporada o semanal para ver tus resultados.</p>
+            <div class="form-group">
+                <label for="login-codigo">Código de Acceso:</label>
+                <input type="password" id="login-codigo" placeholder="Ej.1234">
+            </div>
+            <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
+            <div id="mensaje-login"></div>
+        </div>
+
+        <div id="main-content">
+            <header>
+                <h1 id="welcome-message">¡Hola, Jugador!</h1>
+                <button id="btn-logout">Salir</button>
+            </header>
+            
+            <nav class="tab-nav">
+                <button class="tab-button active" data-tab="tab-resultados-publicos">Resultados</button>
+                <button class="tab-button" data-tab="tab-tabla-general">Tabla General</button>
+                <button class="tab-button" data-tab="tab-saldos">Mis Saldos</button>
+            </nav>
+
+            <div id="tab-resultados-publicos" class="tab-content active">
+                <h2>Resultados de Todos por Jornada</h2>
+                <div class="form-group" style="max-width: 300px;">
+                    <label for="jornada-select-publica">Selecciona una jornada:</label>
+                    <select id="jornada-select-publica">
+                        <option value="1">Jornada 1</option>
+                        <option value="2">Jornada 2</option>
+                        <option value="3">Jornada 3</option>
+                        <option value="4">Jornada 4</option>
+                        <option value="5">Jornada 5</option>
+                        <option value="6">Jornada 6</option>
+                        <option value="7">Jornada 7</option>
+                        <option value="8">Jornada 8</option>
+                        <option value="9">Jornada 9</option>
+                        <option value="10">Jornada 10</option>
+                        <option value="11">Jornada 11</option>
+                        <option value="12">Jornada 12</option>
+                        <option value="13">Jornada 13</option>
+                        <option value="14">Jornada 14</option>
+                        <option value="15">Jornada 15</option>
+                        <option value="16">Jornada 16</option>
+                        <option value="17">Jornada 17</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <table id="resultados-publicos-tabla">
+                        <thead id="resultados-publicos-thead">
+                            </thead>
+                        <tbody id="resultados-publicos-tbody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-tabla-general" class="tab-content">
+                <h2>Tabla General (Temporada)</h2>
+                <div class="table-container">
+                    <table id="tabla-general-tabla">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>J1</th>
+                                <th>J2</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-general-tbody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-saldos" class="tab-content">
+                <h2>Mis Saldos</h2>
+                <div class="saldos-container">
+                    
+                    <div class="saldo-card" id="saldo-temporada-card">
+                        <h3>Quiniela de Temporada</h3>
+                        <p id="saldo-temporada-pagado" class="valor pagado">$0.00</p>
+                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Total Pagado</p>
+                        <p id="saldo-temporada-debe" class="valor debe">$0.00</p>
+                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Saldo Pendiente</p>
+                    </div>
+
+                    <div class="saldo-card" id="saldo-semanal-card">
+                        <h3>Quinielas Semanales</h3>
+                        <p id="saldo-semanal-disponible" class="valor disponible">0</p>
+                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Disponibles</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div> <div id="loader">Cargando...</div>
+        
+    </div> <script>
+        // =========================================================================
+        // SCRIPT DEL PANEL DE PARTICIPANTE (MODIFICADO - v4.3)
+        // =========================================================================
+        
+        // --- 1. CONFIGURACIÓN Y VARIABLES ---
+        
+        // ¡¡¡ IMPORTANTE !!!
+        // Pega aquí la URL de tu implementación de Apps Script más reciente (v4.2)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZ9dQM60qje2Sa4EDoS7d6J652zJqXNB9GiPTqE44ShTF8aev9QmpNeheXcbVpo9zj/exec";
+
+        
+        // Elementos del DOM
+        const loginScreen = document.getElementById('login-screen');
+        const mainContent = document.getElementById('main-content');
+        const loginCodigoInput = document.getElementById('login-codigo');
+        const btnLogin = document.getElementById('btn-login');
+        const btnLogout = document.getElementById('btn-logout');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const mensajeLogin = document.getElementById('mensaje-login');
+        const loader = document.getElementById('loader');
+
+        const tabs = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        const jornadaSelectPublica = document.getElementById('jornada-select-publica');
+
+        // --- 2. VERIFICAR SESIÓN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const nombre = sessionStorage.getItem('nombreUsuario');
+            if (nombre) {
+                mostrarPanel(nombre);
+            }
+        });
+        
+        // --- 3. LOGIN ---
+        btnLogin.addEventListener('click', async () => {
+            const codigo = loginCodigoInput.value;
+            if (!codigo) {
+                mostrarMensajeLogin('error', 'Por favor, ingresa un código.');
+                return;
+            }
+            
+            mostrarLoader(true);
+            mostrarMensajeLogin(false);
+            
+            const formData = new FormData();
+            formData.append('accion', 'loginParticipante');
+            formData.append('codigo', codigo);
+            
+            try {
+                const data = await llamarAppsScript(formData, false); 
+                
+                sessionStorage.setItem('nombreUsuario', data.nombre);
+                sessionStorage.setItem('codigoTemp', data.codigoTemp);
+                sessionStorage.setItem('codigoSem', data.codigoSem);
+                
+                mostrarPanel(data.nombre);
+                
+            } catch (err) {
+                mostrarMensajeLogin('error', err.message);
+            } finally {
+                mostrarLoader(false);
+            }
+        });
+        
+        // --- 4. LOGOUT ---
+        btnLogout.addEventListener('click', () => {
+            sessionStorage.clear();
+            mainContent.style.display = 'none';
+            loginScreen.style.display = 'block';
+            loginCodigoInput.value = '';
+        });
+        
+        // --- 5. MOSTRAR PANEL Y CARGAR DATOS ---
+        function mostrarPanel(nombre) {
+            loginScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+            welcomeMessage.textContent = `¡Hola, ${nombre}!`;
+            
+            cargarPestañaActiva();
+        }
+        
+        // --- 6. MANEJO DE PESTAÑAS ---
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabContent = document.getElementById(tab.dataset.tab);
+                tabContent.classList.add('active');
+                
+                cargarPestañaActiva();
+            });
+        });
+        
+        function cargarPestañaActiva() {
+            const tabActiva = document.querySelector('.tab-button.active').dataset.tab;
+            
+            if (tabActiva === 'tab-tabla-general') {
+                cargarTablaGeneral();
+            } else if (tabActiva === 'tab-saldos') {
+                cargarMisSaldos();
+            } else if (tabActiva === 'tab-resultados-publicos') {
+                cargarResultadosPublicos();
+            }
+        }
+        
+        jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
+
+        // --- 7. ACCIONES DE CARGA DE DATOS ---
+
+        // Cargar Mis Saldos
+        async function cargarMisSaldos() {
+            const formData = new FormData();
+            formData.append('accion', 'getMisSaldos');
+            formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
+            formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
+            
+            try {
+                const data = await llamarAppsScript(formData, false);
+                const formatoMoneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+
+                if (data.saldos.temporada) {
+                    document.getElementById('saldo-temporada-pagado').textContent = formatoMoneda.format(data.saldos.temporada.pagado);
+                    const debe = data.saldos.temporada.debe;
+                    const debeEl = document.getElementById('saldo-temporada-debe');
+                    debeEl.textContent = formatoMoneda.format(debe);
+                    debeEl.className = debe > 0 ? 'valor debe' : 'valor pagado'; 
+                    document.getElementById('saldo-temporada-card').style.display = 'block';
+                } else {
+                    document.getElementById('saldo-temporada-card').style.display = 'none';
+                }
+                
+                if (data.saldos.semanal) {
+                    document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
+                    document.getElementById('saldo-semanal-card').style.display = 'block';
+                } else {
+                    document.getElementById('saldo-semanal-card').style.display = 'none';
+                }
+                
+            } catch (err) {
+                document.getElementById('saldo-temporada-card').style.display = 'none';
+                document.getElementById('saldo-semanal-card').style.display = 'none';
+            }
+        }
+        
+        // Cargar Tabla General
+        async function cargarTablaGeneral() {
+            const tbody = document.getElementById('tabla-general-tbody');
+            tbody.innerHTML = '<tr><td colspan="21">Cargando tabla...</td></tr>';
+            
+            const formData = new FormData();
+            formData.append('accion', 'getTablaGeneral');
+            
+            try {
+                const data = await llamarAppsScript(formData, false);
+                tbody.innerHTML = ''; // Limpiar
+                
+                const headerRow = document.getElementById('tabla-general-tabla').querySelector('thead tr');
+                headerRow.innerHTML = '<th>#</th><th>Nombre</th>';
+                for(let i = 1; i <= 17; i++) {
+                    headerRow.innerHTML += `<th>J${i}</th>`;
+                }
+                headerRow.innerHTML += '<th>Total</th><th>Aciertos M</th><th>Aciertos R</th>';
+                
+                data.tabla.forEach((fila, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    if (index === 0) tr.style.background = "#fffbe6";
+                    if (index === 1) tr.style.background = "#f6f6f7";
+                    if (index === 2) tr.style.background = "#fff3e8";
+
+                    tr.innerHTML = `<td><b>${index + 1}</b></td>`;
+                    fila.forEach(celda => {
+                        tr.innerHTML += `<td>${celda}</td>`;
+                    });
+                    tbody.appendChild(tr);
+                });
+                
+            } catch (err) {
+                 tbody.innerHTML = `<tr><td colspan="21">${err.message}</td></tr>`;
+            }
+        }
+        
+        // Cargar Resultados Públicos (Excel)
+        async function cargarResultadosPublicos() {
+            const jornada = jornadaSelectPublica.value;
+            const thead = document.getElementById('resultados-publicos-thead');
+            const tbody = document.getElementById('resultados-publicos-tbody');
+            tbody.innerHTML = '<tr><td colspan="30">Cargando resultados de todos...</td></tr>';
+            thead.innerHTML = '';
+            
+            const formData = new FormData();
+            formData.append('accion', 'getResultadosPublicos');
+            formData.append('jornada', jornada);
+            
+            try {
+                const data = await llamarAppsScript(formData, false);
+                
+                // 1. Construir Encabezado (Partidos)
+                let headerPartidos = '<tr><th class="td-jugador">Participante</th>';
+                data.partidos.forEach((partido, index) => {
+                    headerPartidos += `<th colspan="3" class="th-partido">P${index + 1}: ${partido.local} vs ${partido.visitante}</th>`;
+                });
+                headerPartidos += '<th>Total Goles</th><th>Total Puntos</th></tr>';
+                
+                // 2. Construir Encabezado (Marcador Real)
+                let headerReal = '<tr><th class="th-marcador-real">MARCADOR REAL</th>';
+                data.resultadosReales.forEach((marcador, index) => {
+                    // Cada 2 es un partido
+                    if (index % 2 === 0) {
+                        const local = marcador;
+                        const visita = data.resultadosReales[index + 1];
+                        const display = (local !== "" || visita !== "") ? `${local} - ${visita}` : "-";
+                        headerReal += `<td colspan="3" class="th-marcador-real">${display}</td>`;
+                    }
+                });
+                
+                // --- ¡¡¡AQUÍ ESTÁ LA MODIFICACIÓN v4.3!!! ---
+                // Se usa data.realTotalGoles (del JSON) para mostrar el total.
+                headerReal += `<td class="th-marcador-real"><b>${data.realTotalGoles}</b></td><td class="th-marcador-real">-</td></tr>`;
+                
+                thead.innerHTML = headerPartidos + headerReal;
+
+                // 3. Construir Cuerpo (Jugadores)
+                tbody.innerHTML = '';
+                if(data.tabla.length === 0) {
+                     tbody.innerHTML = '<tr><td colspan="30">Aún no hay pronósticos para esta jornada.</td></tr>';
+                     return;
+                }
+                
+                data.tabla.forEach(jugador => {
+                    let fila = `<tr class="fila-jugador"><td class="td-jugador">${jugador.nombre}</td>`;
+                    
+                    // Loop 9 partidos
+                    for (let p = 0; p < 9; p++) {
+                        const pLocal = jugador.pronosticos[p * 2];
+                        const pVisita = jugador.pronosticos[p * 2 + 1];
+                        const pPuntos = jugador.puntos[p];
+                        
+                        let puntosClase = '';
+                        if (pPuntos === 3 || pPuntos === 6) puntosClase = 'background: #d4edda;'; // Verde
+                        if (pPuntos === 1 || pPuntos === 2) puntosClase = 'background: #fff3cd;'; // Amarillo
+
+                        fila += `
+                            <td>${pLocal}</td>
+                            <td>${pVisita}</td>
+                            <td class="td-puntos" style="${puntosClase}">${pPuntos}</td>
+                        `;
+                    }
+                    
+                    fila += `<td>${jugador.totalGoles}</td>`;
+                    fila += `<td class="td-total-puntos">${jugador.totalPuntos}</td>`;
+                    fila += '</tr>';
+                    tbody.innerHTML += fila;
+                });
+                
+            } catch (err) {
+                 tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`;
+            }
+        }
+
+
+        // --- 8. FUNCIÓN GENÉRICA DE LLAMADA AL SCRIPT ---
+        async function llamarAppsScript(formData, esAdmin = false) {
+            mostrarLoader(true);
+            if(esAdmin) {
+                formData.append('adminPassword', adminPassword); 
+            }
+            
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (jsonError) {
+                    throw new Error(`Error de servidor: ${text.substring(0, 100)}...`);
+                }
+                
+                if (data.status === 'ok') {
+                    return data; 
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error("Error en llamarAppsScript:", error.message);
+                // Mostrar el error solo si es un error de login
+                if (formData.get('accion') === 'loginParticipante') {
+                    mostrarMensajeLogin('error', error.message);
+                }
+                throw error; 
+            } finally {
+                mostrarLoader(false);
+            }
+        }
+        
+        // --- 9. FUNCIONES AUXILIARES GLOBALES ---
+        function mostrarLoader(mostrar) {
+            loader.style.display = mostrar ? 'block' : 'none';
+        }
+
+        function mostrarMensajeLogin(tipo, texto) {
+            if (tipo === false) {
+                mensajeLogin.style.display = 'none';
+                return;
+            }
+            mensajeLogin.className = tipo;
+            mensajeLogin.textContent = texto;
+            mensajeLogin.style.display = 'block';
+        }
+
+    </script>
+</body>
+</html>
