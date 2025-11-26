@@ -128,7 +128,6 @@
             border: none;
             color: #7f8c8d;
             font-size: 0.85em;
-            /* Reducido para más pestañas */
             font-weight: 700;
             flex-grow: 1;
             border-bottom: 3px solid transparent;
@@ -138,6 +137,11 @@
         .tab-button.active {
             color: #34495e;
             border-bottom: 3px solid #3498db;
+        }
+
+        /* Clase para ocultar pestañas según el tipo de usuario */
+        .tab-button.hidden {
+            display: none !important;
         }
 
         .tab-content {
@@ -158,7 +162,6 @@
         table {
             width: 100%;
             min-width: 700px;
-            /* Ancho mínimo para tablas con scroll */
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -182,36 +185,7 @@
             background-color: #f9f9f9;
         }
 
-        /* Estilos para "Mis Resultados" (Foto) */
-        #resultados-jornada-tabla th:nth-child(1) {
-            width: 40%;
-            text-align: left;
-        }
-
-        #resultados-jornada-tabla td:nth-child(1) {
-            text-align: left;
-            font-weight: 500;
-        }
-
-        #resultados-jornada-tabla th:nth-child(4) {
-            background-color: #2ecc71;
-            color: white;
-        }
-
-        #resultados-jornada-tabla .puntos-cell {
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
-        #total-puntos-jornada {
-            text-align: right;
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-top: 15px;
-        }
-
-        /* ¡NUEVO! Estilos para "Resultados de Todos" (Excel) */
+        /* Estilos para "Resultados de Todos" */
         #resultados-publicos-tabla th {
             font-size: 0.8em;
             padding: 8px 5px;
@@ -252,7 +226,30 @@
             color: white;
         }
 
-        /* Estilos para "Saldos" */
+        /* --- ESTILOS PARA EL COMODÍN --- */
+        .comodin-cell {
+            border: 2px solid #f1c40f !important; /* Borde Dorado */
+            position: relative;
+            background-color: #fff9db !important; /* Fondo amarillo muy claro */
+        }
+        
+        .comodin-cell::after {
+            content: '★';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            color: #f1c40f;
+            background: #fff;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            font-size: 12px;
+            line-height: 14px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* --- Saldos --- */
         .saldos-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -317,12 +314,6 @@
                 padding: 0;
             }
 
-            .admin-panel {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
-
             .tab-nav {
                 font-size: 0.8em;
             }
@@ -333,10 +324,6 @@
 
             .tab-content {
                 padding: 15px;
-            }
-
-            header h1 {
-                font-size: 1.2em;
             }
 
             .saldos-container {
@@ -350,7 +337,7 @@
     <div class="container">
         <div id="login-screen">
             <h2>Panel de Participante</h2>
-            <p>Ingresa tu código de temporada o semanal para ver tus resultados.</p>
+            <p>Ingresa tu código de temporada o semanal.</p>
             <div class="form-group">
                 <label for="login-codigo">Código de Acceso:</label>
                 <input type="password" id="login-codigo" placeholder="Ej. ABC12 O 1234">
@@ -364,52 +351,12 @@
                 <button id="btn-logout">Salir</button>
             </header>
             <nav class="tab-nav">
-                <button class="tab-button active" data-tab="tab-resultados">Mis Resultados</button>
-                <button class="tab-button" data-tab="tab-resultados-publicos">Resultados de Todos</button>
-                <button class="tab-button" data-tab="tab-tabla-general">Tabla General</button>
+                <button class="tab-button active" data-tab="tab-resultados-publicos">Resultados de Todos</button>
+                <button class="tab-button" id="btn-tab-general" data-tab="tab-tabla-general">Tabla General</button>
                 <button class="tab-button" data-tab="tab-saldos">Mis Saldos</button>
             </nav>
-            <div id="tab-resultados" class="tab-content active">
-                <h2>Mis Resultados por Jornada</h2>
-                <div class="form-group" style="max-width: 300px;">
-                    <label for="jornada-select-privada">Selecciona una jornada:</label>
-                    <select id="jornada-select-privada">
-                        <option value="1">Jornada 1</option>
-                        <option value="2">Jornada 2</option>
-                        <option value="3">Jornada 3</option>
-                        <option value="4">Jornada 4</option>
-                        <option value="5">Jornada 5</option>
-                        <option value="6">Jornada 6</option>
-                        <option value="7">Jornada 7</option>
-                        <option value="8">Jornada 8</option>
-                        <option value="9">Jornada 9</option>
-                        <option value="10">Jornada 10</option>
-                        <option value="11">Jornada 11</option>
-                        <option value="12">Jornada 12</option>
-                        <option value="13">Jornada 13</option>
-                        <option value="14">Jornada 14</option>
-                        <option value="15">Jornada 15</option>
-                        <option value="16">Jornada 16</option>
-                        <option value="17">Jornada 17</option>
-                    </select>
-                </div>
-                <div class="table-container">
-                    <table id="resultados-jornada-tabla">
-                        <thead>
-                            <tr>
-                                <th>Partido</th>
-                                <th>Mi Pronóstico</th>
-                                <th>Real</th>
-                                <th>Puntos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultados-jornada-tbody">
-                        </tbody>
-                    </table>
-                </div>
-                <div id="total-puntos-jornada"></div>
-            </div>
-            <div id="tab-resultados-publicos" class="tab-content">
+            
+            <div id="tab-resultados-publicos" class="tab-content active">
                 <h2>Resultados de Todos por Jornada</h2>
                 <div class="form-group" style="max-width: 300px;">
                     <label for="jornada-select-publica">Selecciona una jornada:</label>
@@ -433,6 +380,10 @@
                         <option value="17">Jornada 17</option>
                     </select>
                 </div>
+                <p style="font-size: 0.9em; color: #666;">
+                    <span style="display:inline-block; width:12px; height:12px; background:#fff9db; border:2px solid #f1c40f; margin-right:5px; vertical-align:middle;"></span>
+                    Casilla con borde dorado y estrella indica el <b>Comodín</b> seleccionado.
+                </p>
                 <div class="table-container">
                     <table id="resultados-publicos-tabla">
                         <thead id="resultados-publicos-thead">
@@ -442,6 +393,7 @@
                     </table>
                 </div>
             </div>
+            
             <div id="tab-tabla-general" class="tab-content">
                 <h2>Tabla General (Temporada)</h2>
                 <div class="table-container">
@@ -460,6 +412,7 @@
                     </table>
                 </div>
             </div>
+            
             <div id="tab-saldos" class="tab-content">
                 <h2>Mis Saldos</h2>
                 <div class="saldos-container">
@@ -482,13 +435,10 @@
     </div>
     <script>
         // =========================================================================
-        // SCRIPT DEL PANEL DE PARTICIPANTE (v1.2 - Añade "Resultados de Todos")
+        // SCRIPT DEL PANEL DE PARTICIPANTE (v4.0 - Comodín + Filtro Semanal)
         // =========================================================================
 
-        // --- 1. CONFIGURACIÓN Y VARIABLES ---
-
-        // ¡¡¡ LÍNEA MODIFICADA !!!
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2gsmDruYfBsnv9Hl3hwHZEn5sY361cO9dTTCUxy5RAH_w6qs2cRVlM99yln9taKTK/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4CnF66YPWVyy594NKjR0Vuba4pA1W_G0HsTqx__Lhze2xs6dAXElowjm2BzCy674/exec";
 
         // Elementos del DOM
         const loginScreen = document.getElementById('login-screen');
@@ -503,14 +453,19 @@
         const tabs = document.querySelectorAll('.tab-button');
         const contents = document.querySelectorAll('.tab-content');
 
-        const jornadaSelectPrivada = document.getElementById('jornada-select-privada');
         const jornadaSelectPublica = document.getElementById('jornada-select-publica');
+        
+        // Elementos específicos de permisos
+        const btnTabGeneral = document.getElementById('btn-tab-general');
+        const saldoTemporadaCard = document.getElementById('saldo-temporada-card');
 
         // --- 2. VERIFICAR SESIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
             const nombre = sessionStorage.getItem('nombreUsuario');
             if (nombre) {
-                mostrarPanel(nombre);
+                // Recuperar permisos guardados
+                const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
+                mostrarPanel(nombre, esSoloSemanal);
             }
         });
 
@@ -533,12 +488,19 @@
                 const data = await llamarAppsScript(formData, false);
 
                 sessionStorage.setItem('nombreUsuario', data.nombre);
-                sessionStorage.setItem('codigoTemp', data.codigoTemp);
-                sessionStorage.setItem('codigoSem', data.codigoSem);
+                
+                // LÓGICA DE PERMISOS:
+                // Si codigoTemp está vacío o undefined, es un usuario Semanal puro.
+                const esSoloSemanal = (!data.codigoTemp || data.codigoTemp === "");
 
-                mostrarPanel(data.nombre);
+                sessionStorage.setItem('codigoTemp', data.codigoTemp || ""); // Guardar vacío si no existe
+                sessionStorage.setItem('codigoSem', data.codigoSem || "");
+                sessionStorage.setItem('esSoloSemanal', esSoloSemanal);
+
+                mostrarPanel(data.nombre, esSoloSemanal);
             } catch (err) {
-                mostrarMensajeLogin('error', err.message);
+                console.error(err);
+                mostrarMensajeLogin('error', 'Error al entrar: ' + err.message);
             } finally {
                 mostrarLoader(false);
             }
@@ -550,20 +512,43 @@
             mainContent.style.display = 'none';
             loginScreen.style.display = 'block';
             loginCodigoInput.value = '';
+            
+            // Restablecer visibilidad de pestañas para el próximo login
+            btnTabGeneral.classList.remove('hidden');
         });
 
-        // --- 5. MOSTRAR PANEL Y CARGAR DATOS ---
-        function mostrarPanel(nombre) {
+        // --- 5. MOSTRAR PANEL Y CONFIGURAR VISTA ---
+        function mostrarPanel(nombre, esSoloSemanal) {
             loginScreen.style.display = 'none';
             mainContent.style.display = 'block';
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
 
-            cargarPestañaActiva();
+            // Aplicar restricciones si es usuario semanal
+            if (esSoloSemanal) {
+                btnTabGeneral.classList.add('hidden'); // Ocultar pestaña general
+                saldoTemporadaCard.style.display = 'none'; // Ocultar saldo temporada
+            } else {
+                btnTabGeneral.classList.remove('hidden');
+                saldoTemporadaCard.style.display = 'block';
+            }
+
+            // Seleccionar por defecto la pestaña "Resultados de Todos"
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            const tabDefault = document.querySelector('[data-tab="tab-resultados-publicos"]');
+            if(tabDefault) {
+                tabDefault.classList.add('active');
+                document.getElementById('tab-resultados-publicos').classList.add('active');
+                cargarResultadosPublicos(); // Carga automática al entrar
+            }
         }
 
         // --- 6. MANEJO DE PESTAÑAS ---
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
+                if(tab.classList.contains('hidden')) return; // No hacer nada si está oculta
+
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
@@ -578,9 +563,7 @@
         function cargarPestañaActiva() {
             const tabActiva = document.querySelector('.tab-button.active').dataset.tab;
 
-            if (tabActiva === 'tab-resultados') {
-                cargarMisResultados();
-            } else if (tabActiva === 'tab-tabla-general') {
+            if (tabActiva === 'tab-tabla-general') {
                 cargarTablaGeneral();
             } else if (tabActiva === 'tab-saldos') {
                 cargarMisSaldos();
@@ -589,13 +572,21 @@
             }
         }
 
-        // Listeners para los selectores de jornada
-        jornadaSelectPrivada.addEventListener('change', cargarMisResultados);
-        jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
+        // Listeners
+        if(jornadaSelectPublica) {
+            jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
+        }
 
-        // --- 7. ACCIONES DE CARGA DE DATOS ---
-        // Cargar Mis Saldos
+        // --- 7. CARGA DE DATOS ---
+
+        // Cargar Saldos
         async function cargarMisSaldos() {
+            const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
+            
+            if(esSoloSemanal) {
+                document.getElementById('saldo-temporada-card').style.display = 'none';
+            }
+
             const formData = new FormData();
             formData.append('accion', 'getMisSaldos');
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
@@ -608,32 +599,29 @@
                     currency: 'MXN'
                 });
 
-                if (data.saldos.temporada) {
+                if (data.saldos.temporada && !esSoloSemanal) {
                     document.getElementById('saldo-temporada-pagado').textContent = formatoMoneda.format(data.saldos.temporada.pagado);
                     const debe = data.saldos.temporada.debe;
                     const debeEl = document.getElementById('saldo-temporada-debe');
                     debeEl.textContent = formatoMoneda.format(debe);
                     debeEl.className = debe > 0 ? 'valor debe' : 'valor pagado';
-                    document.getElementById('saldo-temporada-card').style.display = 'block';
-                } else {
-                    document.getElementById('saldo-temporada-card').style.display = 'none';
                 }
 
                 if (data.saldos.semanal) {
                     document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
                     document.getElementById('saldo-semanal-card').style.display = 'block';
-                } else {
-                    document.getElementById('saldo-semanal-card').style.display = 'none';
                 }
 
             } catch (err) {
-                document.getElementById('saldo-temporada-card').style.display = 'none';
-                document.getElementById('saldo-semanal-card').style.display = 'none';
+                console.error(err);
             }
         }
 
         // Cargar Tabla General
         async function cargarTablaGeneral() {
+            // Seguridad: Si es semanal, no cargar nada
+            if(sessionStorage.getItem('esSoloSemanal') === 'true') return;
+
             const tbody = document.getElementById('tabla-general-tbody');
             tbody.innerHTML = '<tr><td colspan="21">Cargando tabla...</td></tr>';
 
@@ -649,11 +637,10 @@
                 for (let i = 1; i <= 17; i++) {
                     headerRow.innerHTML += `<th>J${i}</th>`;
                 }
-                headerRow.innerHTML += '<th>Total</th><th>Aciertos M</th><th>Aciertos R</th>';
+                headerRow.innerHTML += '<th>Total</th>';
 
                 data.tabla.forEach((fila, index) => {
                     const tr = document.createElement('tr');
-
                     if (index === 0) tr.style.background = "#fffbe6";
                     if (index === 1) tr.style.background = "#f6f6f7";
                     if (index === 2) tr.style.background = "#fff3e8";
@@ -670,51 +657,12 @@
             }
         }
 
-        // Cargar Mis Resultados (la de la foto)
-        async function cargarMisResultados() {
-            const jornada = jornadaSelectPrivada.value;
-            const tbody = document.getElementById('resultados-jornada-tbody');
-            tbody.innerHTML = '<tr><td colspan="4">Cargando resultados...</td></tr>';
-            document.getElementById('total-puntos-jornada').textContent = '';
-
-            const formData = new FormData();
-            formData.append('accion', 'getMisResultados');
-            formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
-            formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
-            formData.append('jornada', jornada);
-
-            try {
-                const data = await llamarAppsScript(formData, false);
-                tbody.innerHTML = ''; // Limpiar
-
-                data.comparativa.forEach(item => {
-                    const tr = document.createElement('tr');
-
-                    let puntosClase = '';
-                    if (item.puntos === 3 || item.puntos === 6) puntosClase = 'background: #d4edda;'; // Verde (Marcador)
-                    if (item.puntos === 1 || item.puntos === 2) puntosClase = 'background: #fff3cd;'; // Amarillo (Resultado)
-
-                    tr.innerHTML = `
-                        <td>${item.partido}</td>
-                        <td>${item.pronostico}</td>
-                        <td>${item.real}</td>
-                        <td class="puntos-cell" style="${puntosClase}">${item.puntos}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-                document.getElementById('total-puntos-jornada').textContent = `Total Jornada: ${data.totalPuntos} Puntos`;
-
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4">${err.message}</td></tr>`;
-                document.getElementById('total-puntos-jornada').textContent = '';
-            }
-        }
-
-        // --- ¡NUEVO! (v3.7) Cargar Resultados Públicos (Excel) ---
-        // --- ¡MODIFICADO POR EL USUARIO! (Para mostrar total de goles) ---
+        // Cargar Resultados Públicos (CON COMODÍN Y FILTRO)
         async function cargarResultadosPublicos() {
             const jornada = jornadaSelectPublica.value;
+            // Verificar si el usuario es Solo Semanal
+            const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
+
             const thead = document.getElementById('resultados-publicos-thead');
             const tbody = document.getElementById('resultados-publicos-tbody');
             tbody.innerHTML = '<tr><td colspan="30">Cargando resultados de todos...</td></tr>';
@@ -727,88 +675,100 @@
             try {
                 const data = await llamarAppsScript(formData, false);
 
-                // 1. Construir Encabezado (Partidos)
+                // 1. Encabezado Partidos
                 let headerPartidos = '<tr><th class="td-jugador">Participante</th>';
                 data.partidos.forEach((partido, index) => {
                     headerPartidos += `<th colspan="3" class="th-partido">P${index + 1}: ${partido.local} vs ${partido.visita}</th>`;
                 });
-                headerPartidos += '<th>Total Goles</th><th>Total Puntos</th></tr>';
+                headerPartidos += '<th>Goles</th><th>Puntos</th></tr>';
 
-                // 2. Construir Encabezado (Marcador Real)
+                // 2. Encabezado Marcador Real
                 let headerReal = '<tr><th class="th-marcador-real">MARCADOR REAL</th>';
-                
-                // --- INICIO DE LA MODIFICACIÓN ---
-                let hayResultadosReales = false; // Flag para saber si ya hay marcadores
-                
+                let hayResultadosReales = false;
+
                 data.resultadosReales.forEach((marcador, index) => {
-                    // Cada 2 es un partido
                     if (index % 2 === 0) {
                         const local = marcador;
                         const visita = data.resultadosReales[index + 1];
                         const display = (local !== "" || visita !== "") ? `${local} - ${visita}` : "-";
                         
-                        if (local !== "" || visita !== "") {
-                            hayResultadosReales = true; // Marcamos que sí hay al menos un resultado
-                        }
-
+                        if (local !== "" || visita !== "") hayResultadosReales = true;
                         headerReal += `<td colspan="3" class="th-marcador-real">${display}</td>`;
                     }
                 });
 
-                // Usamos el flag para decidir si mostrar el total de goles o un guion
                 const displayTotalGoles = hayResultadosReales ? data.realTotalGoles : "-";
-                
-                // ¡AQUÍ ESTÁ EL CAMBIO! Usamos la variable 'displayTotalGoles'
                 headerReal += `<td class="th-marcador-real">${displayTotalGoles}</td><td class="th-marcador-real">-</td></tr>`;
-                // --- FIN DE LA MODIFICACIÓN ---
-
+                
                 thead.innerHTML = headerPartidos + headerReal;
 
-                // 3. Construir Cuerpo (Jugadores)
+                // 3. Cuerpo con Comodín y Filtro
                 tbody.innerHTML = '';
                 if(data.tabla.length === 0) {
-                     tbody.innerHTML = '<tr><td colspan="30">Aún no hay pronósticos para esta jornada.</td></tr>';
-                     return;
+                      tbody.innerHTML = '<tr><td colspan="30">Aún no hay pronósticos.</td></tr>';
+                      return;
                 }
                 
+                let filasVisibles = 0;
+
                 data.tabla.forEach(jugador => {
+                    // --- LOGICA DE FILTRO ---
+                    // Si yo soy Semanal y el rival es Solo Temporada, NO lo muestro.
+                    // jugador.tipoJugador viene del backend (Columna Z)
+                    let tipoRival = (jugador.tipoJugador || "").toString().toLowerCase().trim();
+
+                    if (esSoloSemanal) {
+                        if (tipoRival !== 'semanal' && tipoRival !== 'ambos') {
+                            return; // Saltar a este jugador
+                        }
+                    }
+
+                    filasVisibles++;
                     let fila = `<tr class="fila-jugador"><td class="td-jugador">${jugador.nombre}</td>`;
-                                        
-                    // Loop 9 partidos
+                    
+                    // Comodin Index (viene del backend como numero 1-9)
+                    // Restamos 1 para comparar con el indice del array (0-8)
+                    let comodinIndex = (jugador.comodinIdx) ? (parseInt(jugador.comodinIdx) - 1) : -1;
+
                     for (let p = 0; p < 9; p++) {
                         const pLocal = jugador.pronosticos[p * 2];
                         const pVisita = jugador.pronosticos[p * 2 + 1];
                         const pPuntos = jugador.puntos[p];
-                                                
+                                            
                         let puntosClase = '';
-                        if (pPuntos === 3 || pPuntos === 6) puntosClase = 'background: #d4edda;'; // Verde
-                        if (pPuntos === 1 || pPuntos === 2) puntosClase = 'background: #fff3cd;'; // Amarillo
+                        // Colores de acierto
+                        if (pPuntos === 3 || pPuntos === 6) puntosClase = 'background: #d4edda;'; 
+                        else if (pPuntos === 1 || pPuntos === 2) puntosClase = 'background: #fff3cd;';
+
+                        // CHEQUEO DE COMODÍN
+                        let esComodin = (p === comodinIndex);
+                        let claseCelda = esComodin ? 'td-puntos comodin-cell' : 'td-puntos';
 
                         fila += `
                             <td>${pLocal}</td>
                             <td>${pVisita}</td>
-                            <td class="td-puntos" style="${puntosClase}">${pPuntos}</td>
+                            <td class="${claseCelda}" style="${puntosClase}">${pPuntos}</td>
                         `;
                     }
-                                        
+                                            
                     fila += `<td>${jugador.totalGoles}</td>`;
                     fila += `<td class="td-total-puntos">${jugador.totalPuntos}</td>`;
                     fila += '</tr>';
                     tbody.innerHTML += fila;
                 });
 
+                if (filasVisibles === 0) {
+                     tbody.innerHTML = '<tr><td colspan="30">No hay participantes visibles para tu tipo de cuenta.</td></tr>';
+                }
+
             } catch (err) {
                  tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`;
             }
         }
 
-        // --- 8. FUNCIÓN GENÉRICA DE LLAMADA AL SCRIPT ---
+        // --- 8. LLAMADA AL SCRIPT ---
         async function llamarAppsScript(formData, esAdmin = false) {
             mostrarLoader(true);
-            if (esAdmin) {
-                formData.append('adminPassword', adminPassword);
-            }
-
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -819,7 +779,8 @@
                 try {
                     data = JSON.parse(text);
                 } catch (jsonError) {
-                    throw new Error(`Error de servidor: ${text.substring(0, 100)}...`);
+                    console.error("Respuesta cruda del servidor:", text);
+                    throw new Error(`Error de servidor (HTML devuelto). Revisa la consola.`);
                 }
 
                 if (data.status === 'ok') {
@@ -829,9 +790,8 @@
                 }
             } catch (error) {
                 console.error("Error en llamarAppsScript:", error.message);
-                // Mostrar el error solo si es un error de login
                 if (formData.get('accion') === 'loginParticipante') {
-                    mostrarMensajeLogin('error', error.message);
+                    throw error; // Re-lanzar para que lo atrape el botón
                 }
                 throw error;
             } finally {
@@ -839,7 +799,6 @@
             }
         }
 
-        // --- 9. FUNCIONES AUXILIARES GLOBALES ---
         function mostrarLoader(mostrar) {
             loader.style.display = mostrar ? 'block' : 'none';
         }
