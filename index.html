@@ -39,7 +39,7 @@
 
     .btn-regreso-fijo:hover {
         background-color: #ffb74d; 
-        transform: scale(1.05);    
+        transform: scale(1.05);     
     }
 
         .container {
@@ -464,7 +464,7 @@
     </div>
     <script>
         // =========================================================================
-        // SCRIPT DEL PANEL DE PARTICIPANTE (v4.0 - Comodín + Filtro Semanal)
+        // SCRIPT DEL PANEL DE PARTICIPANTE (v4.1 - Filtro Bidireccional)
         // =========================================================================
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"
@@ -685,10 +685,9 @@
             }
         }
 
-        // Cargar Resultados Públicos (CON COMODÍN Y FILTRO)
+        // Cargar Resultados Públicos (CON FILTRO BIDIRECCIONAL)
         async function cargarResultadosPublicos() {
             const jornada = jornadaSelectPublica.value;
-            // Verificar si el usuario es Solo Semanal
             const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
 
             const thead = document.getElementById('resultados-publicos-thead');
@@ -741,34 +740,30 @@
 
                 data.tabla.forEach(jugador => {
                     // --- LOGICA DE FILTRO ---
-                    // Si yo soy Semanal y el rival es Solo Temporada, NO lo muestro.
-                    // jugador.tipoJugador viene del backend (Columna Z)
                     let tipoRival = (jugador.tipoJugador || "").toString().toLowerCase().trim();
 
                     if (esSoloSemanal) {
-                        if (tipoRival !== 'semanal' && tipoRival !== 'ambos') {
-                            return; // Saltar a este jugador
-                        }
+                        // Usuario Semanal: Solo ve 'semanal'
+                        if (tipoRival !== 'semanal') return;
+                    } else {
+                        // Usuario Temporada: Solo ve 'temporada' y 'ambos' (NO ve 'semanal')
+                        if (tipoRival === 'semanal') return;
                     }
 
                     filasVisibles++;
                     let fila = `<tr class="fila-jugador"><td class="td-jugador">${jugador.nombre}</td>`;
                     
-                    // Comodin Index (viene del backend como numero 1-9)
-                    // Restamos 1 para comparar con el indice del array (0-8)
                     let comodinIndex = (jugador.comodinIdx) ? (parseInt(jugador.comodinIdx) - 1) : -1;
 
                     for (let p = 0; p < 9; p++) {
                         const pLocal = jugador.pronosticos[p * 2];
                         const pVisita = jugador.pronosticos[p * 2 + 1];
                         const pPuntos = jugador.puntos[p];
-                                            
+                                                 
                         let puntosClase = '';
-                        // Colores de acierto
                         if (pPuntos === 3 || pPuntos === 6) puntosClase = 'background: #d4edda;'; 
                         else if (pPuntos === 1 || pPuntos === 2) puntosClase = 'background: #fff3cd;';
 
-                        // CHEQUEO DE COMODÍN
                         let esComodin = (p === comodinIndex);
                         let claseCelda = esComodin ? 'td-puntos comodin-cell' : 'td-puntos';
 
@@ -778,7 +773,7 @@
                             <td class="${claseCelda}" style="${puntosClase}">${pPuntos}</td>
                         `;
                     }
-                                            
+                                                 
                     fila += `<td>${jugador.totalGoles}</td>`;
                     fila += `<td class="td-total-puntos">${jugador.totalPuntos}</td>`;
                     fila += '</tr>';
@@ -786,7 +781,7 @@
                 });
 
                 if (filasVisibles === 0) {
-                     tbody.innerHTML = '<tr><td colspan="30">No hay participantes visibles para tu tipo de cuenta.</td></tr>';
+                      tbody.innerHTML = '<tr><td colspan="30">No hay participantes visibles para tu tipo de cuenta.</td></tr>';
                 }
 
             } catch (err) {
@@ -819,7 +814,7 @@
             } catch (error) {
                 console.error("Error en llamarAppsScript:", error.message);
                 if (formData.get('accion') === 'loginParticipante') {
-                    throw error; // Re-lanzar para que lo atrape el botón
+                    throw error; 
                 }
                 throw error;
             } finally {
