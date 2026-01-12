@@ -9,363 +9,168 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-        /* Estilo para el botón FIJO anaranjado */
-    .btn-regreso-fijo {
-        position: fixed; /* Se queda pegado aunque bajes la pantalla */
-        top: 20px;       /* Distancia desde el techo */
-        right: 20px;     /* Distancia desde la derecha */
-        
-        /* Colores */
-        background-color: #ffcc80; /* Anaranjado claro */
-        color: #5d4037;            /* Letra café oscuro */
-        border: 2px solid #ffffff; /* Borde blanco */
-        
-        /* Diseño */
-        text-decoration: none;
-        padding: 10px 15px;
-        border-radius: 30px; 
-        font-family: sans-serif;
-        font-weight: bold;
-        font-size: 14px;
-        z-index: 9999; /* Siempre visible encima de todo */
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-    }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
 
-    .btn-regreso-fijo:hover {
-        background-color: #ffb74d; 
-        transform: scale(1.05);     
-    }
-
-        .container {
-            max-width: 95%;
-            margin: 20px auto;
-            padding: 0 15px;
+        /* Botón Regreso Fijo */
+        .btn-regreso-fijo {
+            position: fixed; top: 20px; right: 20px;
+            background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff; text-decoration: none;
+            padding: 10px 15px; border-radius: 30px; font-family: sans-serif; font-weight: bold; font-size: 14px;
+            z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
         }
+        .btn-regreso-fijo:hover { background-color: #ffb74d; transform: scale(1.05); }
+
+        .container { max-width: 95%; margin: 20px auto; padding: 0 15px; }
 
         header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px 25px;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: #2c3e50; color: white; padding: 20px 25px;
+            border-radius: 12px 12px 0 0; display: flex;
+            justify-content: space-between; align-items: center;
         }
+        header h1 { margin: 0; font-size: 1.4em; }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.4em;
-        }
+        #btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 0.9em; cursor: pointer; }
 
-        #btn-logout {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9em;
-            cursor: pointer;
-        }
+        #login-screen { padding: 30px; text-align: center; background: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); margin-top: 50px; max-width: 400px; margin-left: auto; margin-right: auto; }
+        #main-content { display: none; background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
 
-        /* --- Login --- */
-        #login-screen {
-            padding: 30px;
-            text-align: center;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-            margin-top: 50px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+        input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
 
-        #login-screen h2 {
-            margin-top: 0;
-            color: #34495e;
-        }
+        button { padding: 12px 20px; font-size: 1em; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.2s; }
+        button.btn-primary { background-color: #3498db; color: white; }
+        button.btn-primary:hover { background-color: #2980b9; }
 
-        #main-content {
-            display: none;
-            background: #fff;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-            overflow: hidden;
-        }
+        .tab-nav { display: flex; background-color: #ecf0f1; overflow-x: auto; }
+        .tab-button { padding: 14px 15px; cursor: pointer; background-color: transparent; border: none; color: #7f8c8d; font-size: 0.85em; font-weight: 700; flex-grow: 1; border-bottom: 3px solid transparent; white-space: nowrap; }
+        .tab-button.active { color: #34495e; border-bottom: 3px solid #3498db; }
+        .tab-button.hidden { display: none !important; }
+        .tab-content { display: none; padding: 25px; }
+        .tab-content.active { display: block; }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+        /* --- ESTILOS DE TABLAS --- */
+        .table-container { overflow: auto; max-width: 100%; max-height: 70vh; position: relative; }
+        table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 0; }
+        th, td { border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9em; white-space: nowrap; background-color: #fff; }
 
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
+        /* ============================================================
+           INMOVILIZAR FILAS Y COLUMNAS - LÓGICA AVANZADA
+           ============================================================ */
 
-        input[type="text"],
-        input[type="password"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
+        /* 1. CONFIGURACIÓN GENERAL PARA CABECERAS FIJAS */
+        thead th { position: sticky; top: 0; z-index: 20; background-color: #34495e; color: white; }
 
-        button {
-            padding: 12px 20px;
-            font-size: 1em;
-            font-weight: 700;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button.btn-primary {
-            background-color: #3498db;
-            color: white;
-        }
-
-        button.btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        /* --- Pestañas --- */
-        .tab-nav {
-            display: flex;
-            background-color: #ecf0f1;
-            overflow-x: auto;
-        }
-
-        .tab-button {
-            padding: 14px 15px;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            color: #7f8c8d;
-            font-size: 0.85em;
-            font-weight: 700;
-            flex-grow: 1;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
-        }
-
-        .tab-button.active {
-            color: #34495e;
-            border-bottom: 3px solid #3498db;
-        }
-
-        /* Clase para ocultar pestañas según el tipo de usuario */
-        .tab-button.hidden {
-            display: none !important;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 25px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* --- Estilos de Tablas --- */
-        .table-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table {
-            width: 100%;
-            min-width: 700px;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            font-size: 0.9em;
-            white-space: nowrap;
-        }
-
-        th {
-            background-color: #f4f6f8;
-            color: #34495e;
-            font-weight: 700;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        /* Estilos para "Resultados de Todos" */
-        #resultados-publicos-tabla th {
-            font-size: 0.8em;
-            padding: 8px 5px;
-        }
-
-        #resultados-publicos-tabla td {
-            font-size: 0.85em;
-            padding: 6px 5px;
-        }
-
-        #resultados-publicos-tabla .th-partido {
+        /* 2. TABLA RESULTADOS GLOBALES (DOBLE FILA FIJA) */
+        
+        /* Fila 1: Partidos (Se pega arriba del todo) */
+        #resultados-publicos-tabla thead tr:nth-child(1) th {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            height: 45px; /* Altura fija para calcular el siguiente top */
             background-color: #34495e;
             color: white;
-            min-width: 150px;
         }
 
-        #resultados-publicos-tabla .th-marcador-real {
+        /* Fila 2: Marcadores Reales (Se pega debajo de la Fila 1) */
+        #resultados-publicos-tabla thead tr:nth-child(2) th,
+        #resultados-publicos-tabla thead tr:nth-child(2) td {
+            position: sticky;
+            top: 45px; /* Se pega a los 45px (altura de fila 1) */
+            z-index: 20;
             background-color: #f4f6f8;
-            font-weight: 700;
             color: #e74c3c;
-        }
-
-        #resultados-publicos-tabla .td-jugador {
-            text-align: left;
             font-weight: 700;
-            min-width: 120px;
+            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); /* Sombra solo en la segunda fila */
         }
 
-        #resultados-publicos-tabla .td-puntos {
-            font-weight: 700;
-            background-color: #ecf0f1;
+        /* Columna 1 (Participante): Se pega a la izquierda */
+        #resultados-publicos-tabla th:first-child,
+        #resultados-publicos-tabla td:first-child {
+            position: sticky; left: 0; z-index: 15;
+            border-right: 2px solid #bbb; background-color: #fff;
         }
 
-        #resultados-publicos-tabla .td-total-puntos {
-            font-weight: 700;
-            font-size: 1.1em;
-            background-color: #3498db;
-            color: white;
-        }
-
-        /* --- ESTILOS PARA EL COMODÍN --- */
-        .comodin-cell {
-            border: 2px solid #f1c40f !important; /* Borde Dorado */
-            position: relative;
-            background-color: #fff9db !important; /* Fondo amarillo muy claro */
-        }
+        /* --- LAS ESQUINAS (CRUCES) --- Deben estar encima de todo (z-index 30) */
         
-        .comodin-cell::after {
-            content: '★';
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            color: #f1c40f;
-            background: #fff;
-            border-radius: 50%;
-            width: 14px;
-            height: 14px;
-            font-size: 12px;
-            line-height: 14px;
-            text-align: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        /* Esquina Superior Izquierda (Participante - Fila 1) */
+        #resultados-publicos-tabla thead tr:nth-child(1) th:first-child {
+            z-index: 30;
+            left: 0;
+            top: 0;
+            background-color: #34495e;
         }
 
-        /* --- Saldos --- */
-        .saldos-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .saldo-card {
-            background: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .saldo-card h3 {
-            margin: 0 0 10px 0;
-            color: #34495e;
-        }
-
-        .saldo-card .valor {
-            font-size: 2.2em;
-            font-weight: 700;
-        }
-
-        .saldo-card .valor.debe {
+        /* Esquina Izquierda Fila 2 (Titulo "Marcador Real" - Fila 2) */
+        #resultados-publicos-tabla thead tr:nth-child(2) th:first-child {
+            z-index: 30;
+            left: 0;
+            top: 45px;
+            background-color: #f4f6f8;
             color: #e74c3c;
         }
 
-        .saldo-card .valor.pagado {
-            color: #2ecc71;
+        /* Negrita para nombres en el cuerpo */
+        #resultados-publicos-tabla tbody td:first-child {
+            font-weight: 700; color: #2c3e50; text-align: left;
         }
 
-        .saldo-card .valor.disponible {
-            color: #3498db;
-        }
+        /* ============================================================ */
 
-        /* Loader y Mensajes */
-        #loader {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: 500;
-            color: #3498db;
-        }
+        /* Tabla Mis Resultados (Encabezado simple) */
+        #mis-resultados-tabla th { position: sticky; top: 0; z-index: 20; background-color: #2980b9; color: white; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
+        #mis-resultados-tabla td.partido-col { text-align: left; font-weight: 500; color: #2c3e50; }
+        #mis-resultados-tabla td.puntos-ganados { font-weight: bold; font-size: 1.1em; }
 
-        #mensaje-login {
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 6px;
-            display: none;
-            font-weight: 500;
-        }
+        /* Tabla General (Columnas 1 y 2 Fijas) */
+        #tabla-general-tabla th:nth-child(1), #tabla-general-tabla td:nth-child(1) { position: sticky; left: 0; z-index: 15; width: 40px; background-color: #f9f9f9; }
+        #tabla-general-tabla th:nth-child(2), #tabla-general-tabla td:nth-child(2) { position: sticky; left: 40px; z-index: 15; border-right: 2px solid #bbb; background-color: #fff; }
+        #tabla-general-tabla thead th { top: 0; z-index: 20; background-color: #34495e; color: white; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
+        #tabla-general-tabla thead th:nth-child(1), #tabla-general-tabla thead th:nth-child(2) { z-index: 30; background-color: #34495e; } /* Esquinas */
 
-        #mensaje-login.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
+        /* Estilos Generales */
+        .puntos-total-banner { background-color: #eaf2f8; border: 1px solid #bdc3c7; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; color: #2c3e50; }
+        .puntos-total-banner h3 { margin: 0; font-size: 1.5em; color: #2980b9; }
+        .info-goles { font-size: 1.1em; font-weight: 500; margin-top: 8px; color: #555; }
+        
+        tr:nth-child(even) td:not(:first-child) { background-color: #f9f9f9; }
+        #resultados-publicos-tabla th { font-size: 0.8em; padding: 8px 5px; }
+        #resultados-publicos-tabla td { font-size: 0.85em; padding: 6px 5px; }
+        #resultados-publicos-tabla .td-puntos { font-weight: 700; background-color: #ecf0f1; }
+        #resultados-publicos-tabla .td-total-puntos { font-weight: 700; font-size: 1.1em; background-color: #3498db; color: white; }
+
+        .comodin-cell { border: 2px solid #f1c40f !important; position: relative; background-color: #fff9db !important; }
+        .comodin-cell::after { content: '★'; position: absolute; top: -6px; right: -6px; color: #f1c40f; background: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 12px; line-height: 14px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        .saldos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .saldo-card { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; }
+        .saldo-card h3 { margin: 0 0 10px 0; color: #34495e; }
+        .saldo-card .valor { font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor.debe { color: #e74c3c; }
+        .saldo-card .valor.pagado { color: #2ecc71; }
+        .saldo-card .valor.disponible { color: #3498db; }
+
+        #loader { display: none; text-align: center; margin: 20px 0; font-weight: 500; color: #3498db; }
+        #mensaje-login { padding: 15px; margin-top: 15px; border-radius: 6px; display: none; font-weight: 500; }
+        #mensaje-login.error { background-color: #f8d7da; color: #721c24; }
 
         @media (max-width: 600px) {
-            .container {
-                margin: 0;
-                padding: 0;
-            }
-
-            .tab-nav {
-                font-size: 0.8em;
-            }
-
-            .tab-button {
-                padding: 12px 10px;
-            }
-
-            .tab-content {
-                padding: 15px;
-            }
-
-            .saldos-container {
-                grid-template-columns: 1fr;
-            }
+            .container { margin: 0; padding: 0; }
+            .tab-nav { font-size: 0.8em; }
+            .tab-button { padding: 12px 10px; }
+            .tab-content { padding: 15px; }
+            .saldos-container { grid-template-columns: 1fr; }
+            .table-container { max-height: 75vh; }
         }
     </style>
 </head>
 
 <body>
-<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">
-    ↩ Regresar
-</a>
+<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
     <div class="container">
         <div id="login-screen">
-            <h2>Resultados,Tablas y Saldos</h2>
+            <h2>Resultados, Tablas y Saldos</h2>
             <p>Ingresa tu código de temporada o semanal.</p>
             <div class="form-group">
                 <label for="login-codigo">Código de Acceso:</label>
@@ -380,45 +185,64 @@
                 <button id="btn-logout">Salir</button>
             </header>
             <nav class="tab-nav">
-                <button class="tab-button active" data-tab="tab-resultados-publicos">Resultados </button>
+                <button class="tab-button active" data-tab="tab-mis-resultados">Mis Resultados</button>
+                <button class="tab-button" data-tab="tab-resultados-publicos">Resultados Globales</button>
                 <button class="tab-button" id="btn-tab-general" data-tab="tab-tabla-general">Tabla General</button>
                 <button class="tab-button" data-tab="tab-saldos">Mis Saldos</button>
             </nav>
             
-            <div id="tab-resultados-publicos" class="tab-content active">
-                <h2>Resultados de Todos por Jornada</h2>
+            <div id="tab-mis-resultados" class="tab-content active">
+                <h2>Mis Aciertos por Jornada</h2>
                 <div class="form-group" style="max-width: 300px;">
-                    <label for="jornada-select-publica">Selecciona una jornada:</label>
-                    <select id="jornada-select-publica">
-                        <option value="1">Jornada 1</option>
-                        <option value="2">Jornada 2</option>
-                        <option value="3">Jornada 3</option>
-                        <option value="4">Jornada 4</option>
-                        <option value="5">Jornada 5</option>
-                        <option value="6">Jornada 6</option>
-                        <option value="7">Jornada 7</option>
-                        <option value="8">Jornada 8</option>
-                        <option value="9">Jornada 9</option>
-                        <option value="10">Jornada 10</option>
-                        <option value="11">Jornada 11</option>
-                        <option value="12">Jornada 12</option>
-                        <option value="13">Jornada 13</option>
-                        <option value="14">Jornada 14</option>
-                        <option value="15">Jornada 15</option>
-                        <option value="16">Jornada 16</option>
-                        <option value="17">Jornada 17</option>
+                    <label>Selecciona Jornada:</label>
+                    <select id="jornada-select-mis-resultados">
+                        <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                        <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                        <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                        <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                        <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                        <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                     </select>
                 </div>
-                <p style="font-size: 0.9em; color: #666;">
-                    <span style="display:inline-block; width:12px; height:12px; background:#fff9db; border:2px solid #f1c40f; margin-right:5px; vertical-align:middle;"></span>
-                    Casilla con borde dorado y estrella indica el <b>Comodín</b> seleccionado.
-                </p>
+
+                <div class="puntos-total-banner">
+                    <h3 id="mis-puntos-total-display">Total Puntos: 0</h3>
+                    <div id="mis-goles-display" class="info-goles">Cargando goles...</div>
+                </div>
+
+                <div class="table-container">
+                    <table id="mis-resultados-tabla">
+                        <thead>
+                            <tr>
+                                <th>Partido</th>
+                                <th>Mi Pronóstico</th>
+                                <th>Resultado Real</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mis-resultados-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-resultados-publicos" class="tab-content">
+                <h2>Resultados de Todos (Global)</h2>
+                <div class="form-group" style="max-width: 300px;">
+                    <label>Selecciona Jornada:</label>
+                    <select id="jornada-select-publica">
+                        <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                        <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                        <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                        <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                        <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                        <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                    </select>
+                </div>
+                <p style="font-size: 0.8em; color: #666;">★ = Comodín</p>
                 <div class="table-container">
                     <table id="resultados-publicos-tabla">
-                        <thead id="resultados-publicos-thead">
-                        </thead>
-                        <tbody id="resultados-publicos-tbody">
-                        </tbody>
+                        <thead id="resultados-publicos-thead"></thead>
+                        <tbody id="resultados-publicos-tbody"></tbody>
                     </table>
                 </div>
             </div>
@@ -431,13 +255,10 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombre</th>
-                                <th>J1</th>
-                                <th>J2</th>
-                                <th>Total</th>
+                                <th>J1</th><th>J2</th><th>Total</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-general-tbody">
-                        </tbody>
+                        <tbody id="tabla-general-tbody"></tbody>
                     </table>
                 </div>
             </div>
@@ -448,14 +269,14 @@
                     <div class="saldo-card" id="saldo-temporada-card">
                         <h3>Quiniela de Temporada</h3>
                         <p id="saldo-temporada-pagado" class="valor pagado">$0.00</p>
-                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Total Pagado</p>
+                        <p style="font-size: 0.9em; color: #555;">Total Pagado</p>
                         <p id="saldo-temporada-debe" class="valor debe">$0.00</p>
-                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Saldo Pendiente</p>
+                        <p style="font-size: 0.9em; color: #555;">Saldo Pendiente</p>
                     </div>
                     <div class="saldo-card" id="saldo-semanal-card">
                         <h3>Quinielas Semanales</h3>
                         <p id="saldo-semanal-disponible" class="valor disponible">0</p>
-                        <p style="font-size: 0.9em; color: #555; margin: 5px 0;">Disponibles</p>
+                        <p style="font-size: 0.9em; color: #555;">Disponibles</p>
                     </div>
                 </div>
             </div>
@@ -464,11 +285,12 @@
     </div>
     <script>
         // =========================================================================
-        // SCRIPT DEL PANEL DE PARTICIPANTE (v4.1 - Filtro Bidireccional)
+        // PANEL PARTICIPANTE v5.2 (Sticky Header Fila 1 y 2)
         // =========================================================================
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"
-        // Elementos del DOM
+        
+        // Elementos DOM
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
         const loginCodigoInput = document.getElementById('login-codigo');
@@ -481,359 +303,273 @@
         const tabs = document.querySelectorAll('.tab-button');
         const contents = document.querySelectorAll('.tab-content');
 
+        const jornadaSelectMisRes = document.getElementById('jornada-select-mis-resultados');
         const jornadaSelectPublica = document.getElementById('jornada-select-publica');
         
-        // Elementos específicos de permisos
         const btnTabGeneral = document.getElementById('btn-tab-general');
         const saldoTemporadaCard = document.getElementById('saldo-temporada-card');
 
-        // --- 2. VERIFICAR SESIÓN ---
+        // --- INICIO ---
         document.addEventListener('DOMContentLoaded', () => {
             const nombre = sessionStorage.getItem('nombreUsuario');
             if (nombre) {
-                // Recuperar permisos guardados
                 const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
                 mostrarPanel(nombre, esSoloSemanal);
             }
         });
 
-        // --- 3. LOGIN ---
+        // --- LOGIN ---
         btnLogin.addEventListener('click', async () => {
             const codigo = loginCodigoInput.value;
-            if (!codigo) {
-                mostrarMensajeLogin('error', 'Por favor, ingresa un código.');
-                return;
-            }
+            if (!codigo) { mostrarMensajeLogin('error', 'Ingresa tu código.'); return; }
 
-            mostrarLoader(true);
-            mostrarMensajeLogin(false);
-
+            mostrarLoader(true); mostrarMensajeLogin(false);
             const formData = new FormData();
             formData.append('accion', 'loginParticipante');
             formData.append('codigo', codigo);
 
             try {
-                const data = await llamarAppsScript(formData, false);
-
+                const data = await llamarAppsScript(formData);
                 sessionStorage.setItem('nombreUsuario', data.nombre);
-                
-                // LÓGICA DE PERMISOS:
-                // Si codigoTemp está vacío o undefined, es un usuario Semanal puro.
                 const esSoloSemanal = (!data.codigoTemp || data.codigoTemp === "");
-
-                sessionStorage.setItem('codigoTemp', data.codigoTemp || ""); // Guardar vacío si no existe
+                sessionStorage.setItem('codigoTemp', data.codigoTemp || ""); 
                 sessionStorage.setItem('codigoSem', data.codigoSem || "");
                 sessionStorage.setItem('esSoloSemanal', esSoloSemanal);
-
                 mostrarPanel(data.nombre, esSoloSemanal);
             } catch (err) {
-                console.error(err);
-                mostrarMensajeLogin('error', 'Error al entrar: ' + err.message);
+                mostrarMensajeLogin('error', err.message);
             } finally {
                 mostrarLoader(false);
             }
         });
 
-        // --- 4. LOGOUT ---
         btnLogout.addEventListener('click', () => {
             sessionStorage.clear();
-            mainContent.style.display = 'none';
-            loginScreen.style.display = 'block';
-            loginCodigoInput.value = '';
-            
-            // Restablecer visibilidad de pestañas para el próximo login
-            btnTabGeneral.classList.remove('hidden');
+            mainContent.style.display = 'none'; loginScreen.style.display = 'block';
+            loginCodigoInput.value = ''; btnTabGeneral.classList.remove('hidden');
         });
 
-        // --- 5. MOSTRAR PANEL Y CONFIGURAR VISTA ---
         function mostrarPanel(nombre, esSoloSemanal) {
-            loginScreen.style.display = 'none';
-            mainContent.style.display = 'block';
+            loginScreen.style.display = 'none'; mainContent.style.display = 'block';
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
 
-            // Aplicar restricciones si es usuario semanal
             if (esSoloSemanal) {
-                btnTabGeneral.classList.add('hidden'); // Ocultar pestaña general
-                saldoTemporadaCard.style.display = 'none'; // Ocultar saldo temporada
+                btnTabGeneral.classList.add('hidden'); saldoTemporadaCard.style.display = 'none'; 
             } else {
-                btnTabGeneral.classList.remove('hidden');
-                saldoTemporadaCard.style.display = 'block';
+                btnTabGeneral.classList.remove('hidden'); saldoTemporadaCard.style.display = 'block';
             }
 
-            // Seleccionar por defecto la pestaña "Resultados de Todos"
+            // Activar primera pestaña por defecto
             tabs.forEach(t => t.classList.remove('active'));
             contents.forEach(c => c.classList.remove('active'));
-            
-            const tabDefault = document.querySelector('[data-tab="tab-resultados-publicos"]');
+            const tabDefault = document.querySelector('[data-tab="tab-mis-resultados"]');
             if(tabDefault) {
                 tabDefault.classList.add('active');
-                document.getElementById('tab-resultados-publicos').classList.add('active');
-                cargarResultadosPublicos(); // Carga automática al entrar
+                document.getElementById('tab-mis-resultados').classList.add('active');
+                cargarMisResultados(); 
             }
         }
 
-        // --- 6. MANEJO DE PESTAÑAS ---
+        // --- TABS ---
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                if(tab.classList.contains('hidden')) return; // No hacer nada si está oculta
-
+                if(tab.classList.contains('hidden')) return;
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
-
-                const tabContent = document.getElementById(tab.dataset.tab);
-                tabContent.classList.add('active');
-
+                document.getElementById(tab.dataset.tab).classList.add('active');
                 cargarPestañaActiva();
             });
         });
 
         function cargarPestañaActiva() {
             const tabActiva = document.querySelector('.tab-button.active').dataset.tab;
-
-            if (tabActiva === 'tab-tabla-general') {
-                cargarTablaGeneral();
-            } else if (tabActiva === 'tab-saldos') {
-                cargarMisSaldos();
-            } else if (tabActiva === 'tab-resultados-publicos') {
-                cargarResultadosPublicos();
-            }
+            if (tabActiva === 'tab-mis-resultados') cargarMisResultados();
+            else if (tabActiva === 'tab-resultados-publicos') cargarResultadosPublicos();
+            else if (tabActiva === 'tab-tabla-general') cargarTablaGeneral();
+            else if (tabActiva === 'tab-saldos') cargarMisSaldos();
         }
 
-        // Listeners
-        if(jornadaSelectPublica) {
-            jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
-        }
+        // Listeners selects
+        jornadaSelectMisRes.addEventListener('change', cargarMisResultados);
+        jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
 
-        // --- 7. CARGA DE DATOS ---
-
-        // Cargar Saldos
-        async function cargarMisSaldos() {
-            const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
+        // --- 1. MIS RESULTADOS ---
+        async function cargarMisResultados() {
+            const jornada = jornadaSelectMisRes.value;
+            const tbody = document.getElementById('mis-resultados-tbody');
+            const totalDisplay = document.getElementById('mis-puntos-total-display');
+            const golesDisplay = document.getElementById('mis-goles-display');
             
-            if(esSoloSemanal) {
-                document.getElementById('saldo-temporada-card').style.display = 'none';
-            }
+            tbody.innerHTML = '<tr><td colspan="4">Cargando tus resultados...</td></tr>';
+            totalDisplay.textContent = 'Calculando...';
+            golesDisplay.textContent = '';
 
+            const formData = new FormData();
+            formData.append('accion', 'getMisResultados');
+            formData.append('jornada', jornada);
+            formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
+            formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
+
+            try {
+                const data = await llamarAppsScript(formData);
+                tbody.innerHTML = '';
+                
+                // Mostrar Total Puntos
+                totalDisplay.textContent = `Total Puntos: ${data.totalPuntos}`;
+                
+                // Mostrar Total Goles
+                let textoGoles = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
+                let estiloGoles = '';
+                if (String(data.realTotalGoles) !== "-" && String(data.miTotalGoles) === String(data.realTotalGoles)) {
+                    textoGoles += " ✅ (+3 pts)";
+                    estiloGoles = "color: #27ae60; font-weight: bold;";
+                }
+                golesDisplay.innerHTML = `<span style="${estiloGoles}">${textoGoles}</span>`;
+
+                data.comparativa.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    let clasePuntos = '';
+                    if (item.puntos >= 3) clasePuntos = 'background-color: #d4edda; color: #155724;'; 
+                    else if (item.puntos > 0) clasePuntos = 'background-color: #fff3cd; color: #856404;'; 
+                    
+                    let esComodin = (index + 1) === data.miComodin;
+                    let claseCeldaPuntos = esComodin ? 'puntos-ganados comodin-cell' : 'puntos-ganados';
+
+                    tr.innerHTML = `
+                        <td class="partido-col">${item.partido}</td>
+                        <td>${item.pronostico}</td>
+                        <td style="font-weight:bold;">${item.real}</td>
+                        <td class="${claseCeldaPuntos}" style="${clasePuntos}">${item.puntos}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="4">${err.message}</td></tr>`;
+                totalDisplay.textContent = 'Total: -';
+                golesDisplay.textContent = '';
+            }
+        }
+
+        // 2. RESULTADOS PUBLICOS
+        async function cargarResultadosPublicos() {
+            const jornada = jornadaSelectPublica.value;
+            const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
+            const tbody = document.getElementById('resultados-publicos-tbody');
+            const thead = document.getElementById('resultados-publicos-thead');
+            
+            tbody.innerHTML = '<tr><td colspan="20">Cargando resultados globales...</td></tr>';
+            
+            const formData = new FormData();
+            formData.append('accion', 'getResultadosPublicos');
+            formData.append('jornada', jornada);
+
+            try {
+                const data = await llamarAppsScript(formData);
+                
+                let headerHTML = '<tr><th class="td-jugador">Participante</th>';
+                data.partidos.forEach((p, i) => { headerHTML += `<th colspan="3" class="th-partido">P${i+1}: ${p.local} vs ${p.visita}</th>`; });
+                headerHTML += '<th>Goles</th><th>Pts</th></tr>';
+                
+                let subHeader = '<tr><th class="th-marcador-real">RESULTADO REAL</th>';
+                let hayReal = false;
+                data.resultadosReales.forEach((r, i) => {
+                    if (i % 2 === 0) {
+                        const local = r, visita = data.resultadosReales[i+1];
+                        if (local !== "" || visita !== "") hayReal = true;
+                        subHeader += `<td colspan="3" class="th-marcador-real">${(local!=="" || visita!=="") ? local+'-'+visita : '-'}</td>`;
+                    }
+                });
+                subHeader += `<td class="th-marcador-real">${hayReal ? data.realTotalGoles : '-'}</td><td class="th-marcador-real">-</td></tr>`;
+                thead.innerHTML = headerHTML + subHeader;
+
+                tbody.innerHTML = '';
+                if(data.tabla.length === 0) { tbody.innerHTML = '<tr><td colspan="30">Sin pronósticos.</td></tr>'; return; }
+
+                let count = 0;
+                data.tabla.forEach(jug => {
+                    let tipoRival = (jug.tipoJugador || "").toLowerCase().trim();
+                    if (esSoloSemanal) { if (tipoRival !== 'semanal') return; } 
+                    else { if (tipoRival === 'semanal') return; }
+
+                    count++;
+                    let row = `<tr><td class="td-jugador">${jug.nombre}</td>`;
+                    let comodinIdx = (jug.comodinIdx) ? (parseInt(jug.comodinIdx) - 1) : -1;
+
+                    for (let p=0; p<9; p++) {
+                        let pts = jug.puntos[p];
+                        let style = (pts>=3)?'background:#d4edda;':(pts>=1)?'background:#fff3cd;':'';
+                        let classCell = (p === comodinIdx) ? 'td-puntos comodin-cell' : 'td-puntos';
+                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${classCell}" style="${style}">${pts}</td>`;
+                    }
+                    row += `<td>${jug.totalGoles}</td><td class="td-total-puntos">${jug.totalPuntos}</td></tr>`;
+                    tbody.innerHTML += row;
+                });
+                if(count === 0) tbody.innerHTML = '<tr><td colspan="30">No hay datos visibles.</td></tr>';
+
+            } catch (err) { tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`; }
+        }
+
+        // 3. TABLA GENERAL
+        async function cargarTablaGeneral() {
+            if(sessionStorage.getItem('esSoloSemanal') === 'true') return;
+            const tbody = document.getElementById('tabla-general-tbody');
+            tbody.innerHTML = '<tr><td colspan="20">Cargando...</td></tr>';
+            
+            const formData = new FormData(); formData.append('accion', 'getTablaGeneral');
+            try {
+                const data = await llamarAppsScript(formData);
+                tbody.innerHTML = '';
+                const headRow = document.querySelector('#tabla-general-tabla thead tr');
+                let hHTML = '<th>#</th><th>Nombre</th>';
+                for(let i=1; i<=17; i++) hHTML += `<th>J${i}</th>`;
+                hHTML += '<th>Total</th>';
+                headRow.innerHTML = hHTML;
+
+                data.tabla.forEach((row, i) => {
+                    let bg = (i===0)?'#fffbe6':(i===1)?'#f6f6f7':(i===2)?'#fff3e8':'';
+                    let tr = `<tr style="background:${bg}"><td><b>${i+1}</b></td>`;
+                    row.forEach(cell => tr += `<td>${cell}</td>`);
+                    tr += '</tr>';
+                    tbody.innerHTML += tr;
+                });
+            } catch (err) { tbody.innerHTML = `<tr><td colspan="20">${err.message}</td></tr>`; }
+        }
+
+        // 4. SALDOS
+        async function cargarMisSaldos() {
+            if(sessionStorage.getItem('esSoloSemanal') === 'true') document.getElementById('saldo-temporada-card').style.display='none';
             const formData = new FormData();
             formData.append('accion', 'getMisSaldos');
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
             formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
 
             try {
-                const data = await llamarAppsScript(formData, false);
-                const formatoMoneda = new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN'
-                });
-
-                if (data.saldos.temporada && !esSoloSemanal) {
-                    document.getElementById('saldo-temporada-pagado').textContent = formatoMoneda.format(data.saldos.temporada.pagado);
-                    const debe = data.saldos.temporada.debe;
-                    const debeEl = document.getElementById('saldo-temporada-debe');
-                    debeEl.textContent = formatoMoneda.format(debe);
-                    debeEl.className = debe > 0 ? 'valor debe' : 'valor pagado';
+                const data = await llamarAppsScript(formData);
+                const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
+                if (data.saldos.temporada) {
+                    document.getElementById('saldo-temporada-pagado').textContent = fmt.format(data.saldos.temporada.pagado);
+                    const db = data.saldos.temporada.debe;
+                    const el = document.getElementById('saldo-temporada-debe');
+                    el.textContent = fmt.format(db);
+                    el.className = db > 0 ? 'valor debe' : 'valor pagado';
                 }
-
-                if (data.saldos.semanal) {
-                    document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
-                    document.getElementById('saldo-semanal-card').style.display = 'block';
-                }
-
-            } catch (err) {
-                console.error(err);
-            }
+                if (data.saldos.semanal) document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
+            } catch (err) { console.error(err); }
         }
 
-        // Cargar Tabla General
-        async function cargarTablaGeneral() {
-            // Seguridad: Si es semanal, no cargar nada
-            if(sessionStorage.getItem('esSoloSemanal') === 'true') return;
-
-            const tbody = document.getElementById('tabla-general-tbody');
-            tbody.innerHTML = '<tr><td colspan="21">Cargando tabla...</td></tr>';
-
-            const formData = new FormData();
-            formData.append('accion', 'getTablaGeneral');
-
-            try {
-                const data = await llamarAppsScript(formData, false);
-                tbody.innerHTML = ''; // Limpiar
-
-                const headerRow = document.getElementById('tabla-general-tabla').querySelector('thead tr');
-                headerRow.innerHTML = '<th>#</th><th>Nombre</th>';
-                for (let i = 1; i <= 17; i++) {
-                    headerRow.innerHTML += `<th>J${i}</th>`;
-                }
-                headerRow.innerHTML += '<th>Total</th>';
-
-                data.tabla.forEach((fila, index) => {
-                    const tr = document.createElement('tr');
-                    if (index === 0) tr.style.background = "#fffbe6";
-                    if (index === 1) tr.style.background = "#f6f6f7";
-                    if (index === 2) tr.style.background = "#fff3e8";
-
-                    tr.innerHTML = `<td><b>${index + 1}</b></td>`;
-                    fila.forEach(celda => {
-                        tr.innerHTML += `<td>${celda}</td>`;
-                    });
-                    tbody.appendChild(tr);
-                });
-
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="21">${err.message}</td></tr>`;
-            }
+        async function llamarAppsScript(formData) {
+            const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+            const text = await res.text();
+            try { return JSON.parse(text).status === 'ok' ? JSON.parse(text) : Promise.reject(JSON.parse(text)); }
+            catch (e) { throw new Error('Error de conexión con Google Sheets'); }
         }
-
-        // Cargar Resultados Públicos (CON FILTRO BIDIRECCIONAL)
-        async function cargarResultadosPublicos() {
-            const jornada = jornadaSelectPublica.value;
-            const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
-
-            const thead = document.getElementById('resultados-publicos-thead');
-            const tbody = document.getElementById('resultados-publicos-tbody');
-            tbody.innerHTML = '<tr><td colspan="30">Cargando resultados de todos...</td></tr>';
-            thead.innerHTML = '';
-
-            const formData = new FormData();
-            formData.append('accion', 'getResultadosPublicos');
-            formData.append('jornada', jornada);
-
-            try {
-                const data = await llamarAppsScript(formData, false);
-
-                // 1. Encabezado Partidos
-                let headerPartidos = '<tr><th class="td-jugador">Participante</th>';
-                data.partidos.forEach((partido, index) => {
-                    headerPartidos += `<th colspan="3" class="th-partido">P${index + 1}: ${partido.local} vs ${partido.visita}</th>`;
-                });
-                headerPartidos += '<th>Goles</th><th>Puntos</th></tr>';
-
-                // 2. Encabezado Marcador Real
-                let headerReal = '<tr><th class="th-marcador-real">MARCADOR REAL</th>';
-                let hayResultadosReales = false;
-
-                data.resultadosReales.forEach((marcador, index) => {
-                    if (index % 2 === 0) {
-                        const local = marcador;
-                        const visita = data.resultadosReales[index + 1];
-                        const display = (local !== "" || visita !== "") ? `${local} - ${visita}` : "-";
-                        
-                        if (local !== "" || visita !== "") hayResultadosReales = true;
-                        headerReal += `<td colspan="3" class="th-marcador-real">${display}</td>`;
-                    }
-                });
-
-                const displayTotalGoles = hayResultadosReales ? data.realTotalGoles : "-";
-                headerReal += `<td class="th-marcador-real">${displayTotalGoles}</td><td class="th-marcador-real">-</td></tr>`;
-                
-                thead.innerHTML = headerPartidos + headerReal;
-
-                // 3. Cuerpo con Comodín y Filtro
-                tbody.innerHTML = '';
-                if(data.tabla.length === 0) {
-                      tbody.innerHTML = '<tr><td colspan="30">Aún no hay pronósticos.</td></tr>';
-                      return;
-                }
-                
-                let filasVisibles = 0;
-
-                data.tabla.forEach(jugador => {
-                    // --- LOGICA DE FILTRO ---
-                    let tipoRival = (jugador.tipoJugador || "").toString().toLowerCase().trim();
-
-                    if (esSoloSemanal) {
-                        // Usuario Semanal: Solo ve 'semanal'
-                        if (tipoRival !== 'semanal') return;
-                    } else {
-                        // Usuario Temporada: Solo ve 'temporada' y 'ambos' (NO ve 'semanal')
-                        if (tipoRival === 'semanal') return;
-                    }
-
-                    filasVisibles++;
-                    let fila = `<tr class="fila-jugador"><td class="td-jugador">${jugador.nombre}</td>`;
-                    
-                    let comodinIndex = (jugador.comodinIdx) ? (parseInt(jugador.comodinIdx) - 1) : -1;
-
-                    for (let p = 0; p < 9; p++) {
-                        const pLocal = jugador.pronosticos[p * 2];
-                        const pVisita = jugador.pronosticos[p * 2 + 1];
-                        const pPuntos = jugador.puntos[p];
-                                                 
-                        let puntosClase = '';
-                        if (pPuntos === 3 || pPuntos === 6) puntosClase = 'background: #d4edda;'; 
-                        else if (pPuntos === 1 || pPuntos === 2) puntosClase = 'background: #fff3cd;';
-
-                        let esComodin = (p === comodinIndex);
-                        let claseCelda = esComodin ? 'td-puntos comodin-cell' : 'td-puntos';
-
-                        fila += `
-                            <td>${pLocal}</td>
-                            <td>${pVisita}</td>
-                            <td class="${claseCelda}" style="${puntosClase}">${pPuntos}</td>
-                        `;
-                    }
-                                                 
-                    fila += `<td>${jugador.totalGoles}</td>`;
-                    fila += `<td class="td-total-puntos">${jugador.totalPuntos}</td>`;
-                    fila += '</tr>';
-                    tbody.innerHTML += fila;
-                });
-
-                if (filasVisibles === 0) {
-                      tbody.innerHTML = '<tr><td colspan="30">No hay participantes visibles para tu tipo de cuenta.</td></tr>';
-                }
-
-            } catch (err) {
-                 tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`;
-            }
-        }
-
-        // --- 8. LLAMADA AL SCRIPT ---
-        async function llamarAppsScript(formData, esAdmin = false) {
-            mostrarLoader(true);
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (jsonError) {
-                    console.error("Respuesta cruda del servidor:", text);
-                    throw new Error(`Error de servidor (HTML devuelto). Revisa la consola.`);
-                }
-
-                if (data.status === 'ok') {
-                    return data;
-                } else {
-                    throw new Error(data.message);
-                }
-            } catch (error) {
-                console.error("Error en llamarAppsScript:", error.message);
-                if (formData.get('accion') === 'loginParticipante') {
-                    throw error; 
-                }
-                throw error;
-            } finally {
-                mostrarLoader(false);
-            }
-        }
-
-        function mostrarLoader(mostrar) {
-            loader.style.display = mostrar ? 'block' : 'none';
-        }
-
-        function mostrarMensajeLogin(tipo, texto) {
-            if (tipo === false) {
-                mensajeLogin.style.display = 'none';
-                return;
-            }
-            mensajeLogin.className = tipo;
-            mensajeLogin.textContent = texto;
-            mensajeLogin.style.display = 'block';
+        function mostrarLoader(show) { loader.style.display = show ? 'block' : 'none'; }
+        function mostrarMensajeLogin(type, msg) {
+            if(!type) { mensajeLogin.style.display='none'; return; }
+            mensajeLogin.className = type; mensajeLogin.textContent = msg; mensajeLogin.style.display='block';
         }
     </script>
 </body>
