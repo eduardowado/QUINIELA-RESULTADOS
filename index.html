@@ -54,102 +54,37 @@
         table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 0; }
         th, td { border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9em; white-space: nowrap; background-color: #fff; }
 
-        /* ============================================================
-           INMOVILIZAR FILAS Y COLUMNAS - LÓGICA AVANZADA
-           ============================================================ */
-
-        /* 1. CONFIGURACIÓN GENERAL PARA CABECERAS FIJAS */
         thead th { position: sticky; top: 0; z-index: 20; background-color: #34495e; color: white; }
 
-        /* 2. TABLA RESULTADOS GLOBALES (DOBLE FILA FIJA) */
-        
-        /* Fila 1: Partidos (Se pega arriba del todo) */
         #resultados-publicos-tabla thead tr:nth-child(1) th {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            height: 45px; /* Altura fija para calcular el siguiente top */
-            background-color: #34495e;
-            color: white;
+            position: sticky; top: 0; z-index: 20; height: 45px; background-color: #34495e; color: white;
         }
 
-        /* Fila 2: Marcadores Reales (Se pega debajo de la Fila 1) */
         #resultados-publicos-tabla thead tr:nth-child(2) th,
         #resultados-publicos-tabla thead tr:nth-child(2) td {
-            position: sticky;
-            top: 45px; /* Se pega a los 45px (altura de fila 1) */
-            z-index: 20;
-            background-color: #f4f6f8;
-            color: #e74c3c;
-            font-weight: 700;
-            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); /* Sombra solo en la segunda fila */
+            position: sticky; top: 45px; z-index: 20; background-color: #f4f6f8; color: #e74c3c; font-weight: 700;
+            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
         }
 
-        /* Columna 1 (Participante): Se pega a la izquierda */
         #resultados-publicos-tabla th:first-child,
         #resultados-publicos-tabla td:first-child {
-            position: sticky; left: 0; z-index: 15;
-            border-right: 2px solid #bbb; background-color: #fff;
+            position: sticky; left: 0; z-index: 15; border-right: 2px solid #bbb; background-color: #fff;
         }
 
-        /* --- LAS ESQUINAS (CRUCES) --- Deben estar encima de todo (z-index 30) */
-        
-        /* Esquina Superior Izquierda (Participante - Fila 1) */
-        #resultados-publicos-tabla thead tr:nth-child(1) th:first-child {
-            z-index: 30;
-            left: 0;
-            top: 0;
-            background-color: #34495e;
-        }
+        #resultados-publicos-tabla thead tr:nth-child(1) th:first-child { z-index: 30; left: 0; top: 0; background-color: #34495e; }
+        #resultados-publicos-tabla thead tr:nth-child(2) th:first-child { z-index: 30; left: 0; top: 45px; background-color: #f4f6f8; color: #e74c3c; }
 
-        /* Esquina Izquierda Fila 2 (Titulo "Marcador Real" - Fila 2) */
-        #resultados-publicos-tabla thead tr:nth-child(2) th:first-child {
-            z-index: 30;
-            left: 0;
-            top: 45px;
-            background-color: #f4f6f8;
-            color: #e74c3c;
-        }
+        #resultados-publicos-tabla tbody td:first-child { font-weight: 700; color: #2c3e50; text-align: left; }
 
-        /* Negrita para nombres en el cuerpo */
-        #resultados-publicos-tabla tbody td:first-child {
-            font-weight: 700; color: #2c3e50; text-align: left;
-        }
-
-        /* ============================================================ */
-
-        /* Tabla Mis Resultados (Encabezado simple) */
-        #mis-resultados-tabla th { position: sticky; top: 0; z-index: 20; background-color: #2980b9; color: white; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
-        #mis-resultados-tabla td.partido-col { text-align: left; font-weight: 500; color: #2c3e50; }
-        #mis-resultados-tabla td.puntos-ganados { font-weight: bold; font-size: 1.1em; }
-
-        /* Tabla General (Columnas 1 y 2 Fijas) */
-        #tabla-general-tabla th:nth-child(1), #tabla-general-tabla td:nth-child(1) { position: sticky; left: 0; z-index: 15; width: 40px; background-color: #f9f9f9; }
-        #tabla-general-tabla th:nth-child(2), #tabla-general-tabla td:nth-child(2) { position: sticky; left: 40px; z-index: 15; border-right: 2px solid #bbb; background-color: #fff; }
-        #tabla-general-tabla thead th { top: 0; z-index: 20; background-color: #34495e; color: white; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
-        #tabla-general-tabla thead th:nth-child(1), #tabla-general-tabla thead th:nth-child(2) { z-index: 30; background-color: #34495e; } /* Esquinas */
-
-        /* Estilos Generales */
         .puntos-total-banner { background-color: #eaf2f8; border: 1px solid #bdc3c7; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; color: #2c3e50; }
-        .puntos-total-banner h3 { margin: 0; font-size: 1.5em; color: #2980b9; }
-        .info-goles { font-size: 1.1em; font-weight: 500; margin-top: 8px; color: #555; }
-        
-        tr:nth-child(even) td:not(:first-child) { background-color: #f9f9f9; }
-        #resultados-publicos-tabla th { font-size: 0.8em; padding: 8px 5px; }
-        #resultados-publicos-tabla td { font-size: 0.85em; padding: 6px 5px; }
-        #resultados-publicos-tabla .td-puntos { font-weight: 700; background-color: #ecf0f1; }
-        #resultados-publicos-tabla .td-total-puntos { font-weight: 700; font-size: 1.1em; background-color: #3498db; color: white; }
-
         .comodin-cell { border: 2px solid #f1c40f !important; position: relative; background-color: #fff9db !important; }
         .comodin-cell::after { content: '★'; position: absolute; top: -6px; right: -6px; color: #f1c40f; background: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 12px; line-height: 14px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
         .saldos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .saldo-card { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; }
-        .saldo-card h3 { margin: 0 0 10px 0; color: #34495e; }
-        .saldo-card .valor { font-size: 2.2em; font-weight: 700; }
-        .saldo-card .valor.debe { color: #e74c3c; }
-        .saldo-card .valor.pagado { color: #2ecc71; }
-        .saldo-card .valor.disponible { color: #3498db; }
+        .valor.debe { color: #e74c3c; font-size: 2.2em; font-weight: 700; }
+        .valor.pagado { color: #2ecc71; font-size: 2.2em; font-weight: 700; }
+        .valor.disponible { color: #3498db; font-size: 2.2em; font-weight: 700; }
 
         #loader { display: none; text-align: center; margin: 20px 0; font-weight: 500; color: #3498db; }
         #mensaje-login { padding: 15px; margin-top: 15px; border-radius: 6px; display: none; font-weight: 500; }
@@ -158,16 +93,13 @@
         @media (max-width: 600px) {
             .container { margin: 0; padding: 0; }
             .tab-nav { font-size: 0.8em; }
-            .tab-button { padding: 12px 10px; }
-            .tab-content { padding: 15px; }
             .saldos-container { grid-template-columns: 1fr; }
-            .table-container { max-height: 75vh; }
         }
     </style>
 </head>
 
 <body>
-<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
     <div class="container">
         <div id="login-screen">
             <h2>Resultados, Tablas y Saldos</h2>
@@ -179,6 +111,7 @@
             <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
             <div id="mensaje-login"></div>
         </div>
+
         <div id="main-content">
             <header>
                 <h1 id="welcome-message">¡Hola, Jugador!</h1>
@@ -255,7 +188,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombre</th>
-                                <th>J1</th><th>J2</th><th>Total</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-general-tbody"></tbody>
@@ -283,14 +216,10 @@
         </div>
         <div id="loader">Cargando...</div>
     </div>
-    <script>
-        // =========================================================================
-        // PANEL PARTICIPANTE v5.2 (Sticky Header Fila 1 y 2)
-        // =========================================================================
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
         
-        // Elementos DOM
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
         const loginCodigoInput = document.getElementById('login-codigo');
@@ -305,11 +234,9 @@
 
         const jornadaSelectMisRes = document.getElementById('jornada-select-mis-resultados');
         const jornadaSelectPublica = document.getElementById('jornada-select-publica');
-        
         const btnTabGeneral = document.getElementById('btn-tab-general');
         const saldoTemporadaCard = document.getElementById('saldo-temporada-card');
 
-        // --- INICIO ---
         document.addEventListener('DOMContentLoaded', () => {
             const nombre = sessionStorage.getItem('nombreUsuario');
             if (nombre) {
@@ -318,16 +245,13 @@
             }
         });
 
-        // --- LOGIN ---
         btnLogin.addEventListener('click', async () => {
             const codigo = loginCodigoInput.value;
             if (!codigo) { mostrarMensajeLogin('error', 'Ingresa tu código.'); return; }
-
             mostrarLoader(true); mostrarMensajeLogin(false);
             const formData = new FormData();
             formData.append('accion', 'loginParticipante');
             formData.append('codigo', codigo);
-
             try {
                 const data = await llamarAppsScript(formData);
                 sessionStorage.setItem('nombreUsuario', data.nombre);
@@ -336,30 +260,24 @@
                 sessionStorage.setItem('codigoSem', data.codigoSem || "");
                 sessionStorage.setItem('esSoloSemanal', esSoloSemanal);
                 mostrarPanel(data.nombre, esSoloSemanal);
-            } catch (err) {
-                mostrarMensajeLogin('error', err.message);
-            } finally {
-                mostrarLoader(false);
-            }
+            } catch (err) { mostrarMensajeLogin('error', err.message); }
+            finally { mostrarLoader(false); }
         });
 
         btnLogout.addEventListener('click', () => {
             sessionStorage.clear();
             mainContent.style.display = 'none'; loginScreen.style.display = 'block';
-            loginCodigoInput.value = ''; btnTabGeneral.classList.remove('hidden');
+            loginCodigoInput.value = '';
         });
 
         function mostrarPanel(nombre, esSoloSemanal) {
             loginScreen.style.display = 'none'; mainContent.style.display = 'block';
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
-
             if (esSoloSemanal) {
                 btnTabGeneral.classList.add('hidden'); saldoTemporadaCard.style.display = 'none'; 
             } else {
                 btnTabGeneral.classList.remove('hidden'); saldoTemporadaCard.style.display = 'block';
             }
-
-            // Activar primera pestaña por defecto
             tabs.forEach(t => t.classList.remove('active'));
             contents.forEach(c => c.classList.remove('active'));
             const tabDefault = document.querySelector('[data-tab="tab-mis-resultados"]');
@@ -370,7 +288,6 @@
             }
         }
 
-        // --- TABS ---
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 if(tab.classList.contains('hidden')) return;
@@ -390,134 +307,98 @@
             else if (tabActiva === 'tab-saldos') cargarMisSaldos();
         }
 
-        // Listeners selects
         jornadaSelectMisRes.addEventListener('change', cargarMisResultados);
         jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
 
-        // --- 1. MIS RESULTADOS ---
         async function cargarMisResultados() {
             const jornada = jornadaSelectMisRes.value;
             const tbody = document.getElementById('mis-resultados-tbody');
             const totalDisplay = document.getElementById('mis-puntos-total-display');
             const golesDisplay = document.getElementById('mis-goles-display');
-            
-            tbody.innerHTML = '<tr><td colspan="4">Cargando tus resultados...</td></tr>';
-            totalDisplay.textContent = 'Calculando...';
-            golesDisplay.textContent = '';
-
+            tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
             const formData = new FormData();
             formData.append('accion', 'getMisResultados');
             formData.append('jornada', jornada);
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
             formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
-
             try {
                 const data = await llamarAppsScript(formData);
                 tbody.innerHTML = '';
-                
-                // Mostrar Total Puntos
                 totalDisplay.textContent = `Total Puntos: ${data.totalPuntos}`;
-                
-                // Mostrar Total Goles
                 let textoGoles = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
-                let estiloGoles = '';
                 if (String(data.realTotalGoles) !== "-" && String(data.miTotalGoles) === String(data.realTotalGoles)) {
                     textoGoles += " ✅ (+3 pts)";
-                    estiloGoles = "color: #27ae60; font-weight: bold;";
                 }
-                golesDisplay.innerHTML = `<span style="${estiloGoles}">${textoGoles}</span>`;
-
+                golesDisplay.innerHTML = textoGoles;
                 data.comparativa.forEach((item, index) => {
                     const tr = document.createElement('tr');
-                    
-                    let clasePuntos = '';
-                    if (item.puntos >= 3) clasePuntos = 'background-color: #d4edda; color: #155724;'; 
-                    else if (item.puntos > 0) clasePuntos = 'background-color: #fff3cd; color: #856404;'; 
-                    
+                    let clasePuntos = item.puntos >= 3 ? 'background-color: #d4edda;' : item.puntos > 0 ? 'background-color: #fff3cd;' : '';
                     let esComodin = (index + 1) === data.miComodin;
-                    let claseCeldaPuntos = esComodin ? 'puntos-ganados comodin-cell' : 'puntos-ganados';
-
-                    tr.innerHTML = `
-                        <td class="partido-col">${item.partido}</td>
-                        <td>${item.pronostico}</td>
-                        <td style="font-weight:bold;">${item.real}</td>
-                        <td class="${claseCeldaPuntos}" style="${clasePuntos}">${item.puntos}</td>
-                    `;
+                    tr.innerHTML = `<td class="partido-col">${item.partido}</td><td>${item.pronostico}</td><td>${item.real}</td><td class="${esComodin?'comodin-cell':''}" style="${clasePuntos}">${item.puntos}</td>`;
                     tbody.appendChild(tr);
                 });
-
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4">${err.message}</td></tr>`;
-                totalDisplay.textContent = 'Total: -';
-                golesDisplay.textContent = '';
-            }
+            } catch (err) { tbody.innerHTML = `<tr><td colspan="4">${err.message}</td></tr>`; }
         }
 
-        // 2. RESULTADOS PUBLICOS
+        // ============================================================
+        // LÓGICA DE FILTRADO ACTUALIZADA (AMBOS VISIBLES)
+        // ============================================================
         async function cargarResultadosPublicos() {
             const jornada = jornadaSelectPublica.value;
             const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
             const tbody = document.getElementById('resultados-publicos-tbody');
             const thead = document.getElementById('resultados-publicos-thead');
-            
-            tbody.innerHTML = '<tr><td colspan="20">Cargando resultados globales...</td></tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="20">Cargando...</td></tr>';
             const formData = new FormData();
             formData.append('accion', 'getResultadosPublicos');
             formData.append('jornada', jornada);
-
             try {
                 const data = await llamarAppsScript(formData);
-                
                 let headerHTML = '<tr><th class="td-jugador">Participante</th>';
-                data.partidos.forEach((p, i) => { headerHTML += `<th colspan="3" class="th-partido">P${i+1}: ${p.local} vs ${p.visita}</th>`; });
+                data.partidos.forEach((p, i) => { headerHTML += `<th colspan="3">P${i+1}</th>`; });
                 headerHTML += '<th>Goles</th><th>Pts</th></tr>';
-                
-                let subHeader = '<tr><th class="th-marcador-real">RESULTADO REAL</th>';
-                let hayReal = false;
+                let subHeader = '<tr><th>MARCADOR REAL</th>';
                 data.resultadosReales.forEach((r, i) => {
                     if (i % 2 === 0) {
-                        const local = r, visita = data.resultadosReales[i+1];
-                        if (local !== "" || visita !== "") hayReal = true;
-                        subHeader += `<td colspan="3" class="th-marcador-real">${(local!=="" || visita!=="") ? local+'-'+visita : '-'}</td>`;
+                        const res = (r!=="" || data.resultadosReales[i+1]!=="") ? r+'-'+data.resultadosReales[i+1] : '-';
+                        subHeader += `<td colspan="3">${res}</td>`;
                     }
                 });
-                subHeader += `<td class="th-marcador-real">${hayReal ? data.realTotalGoles : '-'}</td><td class="th-marcador-real">-</td></tr>`;
+                subHeader += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
                 thead.innerHTML = headerHTML + subHeader;
-
                 tbody.innerHTML = '';
-                if(data.tabla.length === 0) { tbody.innerHTML = '<tr><td colspan="30">Sin pronósticos.</td></tr>'; return; }
 
                 let count = 0;
                 data.tabla.forEach(jug => {
+                    // Normalizamos el tipo de jugador
                     let tipoRival = (jug.tipoJugador || "").toLowerCase().trim();
-                    if (esSoloSemanal) { if (tipoRival !== 'semanal') return; } 
-                    else { if (tipoRival === 'semanal') return; }
+                    
+                    // FILTRO: "Ambos" es visible para todos
+                    if (esSoloSemanal) { 
+                        if (tipoRival !== 'semanal' && tipoRival !== 'ambos') return; 
+                    } else { 
+                        if (tipoRival !== 'temporada' && tipoRival !== 'ambos') return; 
+                    }
 
                     count++;
                     let row = `<tr><td class="td-jugador">${jug.nombre}</td>`;
                     let comodinIdx = (jug.comodinIdx) ? (parseInt(jug.comodinIdx) - 1) : -1;
-
                     for (let p=0; p<9; p++) {
                         let pts = jug.puntos[p];
                         let style = (pts>=3)?'background:#d4edda;':(pts>=1)?'background:#fff3cd;':'';
-                        let classCell = (p === comodinIdx) ? 'td-puntos comodin-cell' : 'td-puntos';
-                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${classCell}" style="${style}">${pts}</td>`;
+                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${p===comodinIdx?'comodin-cell':''}" style="${style}">${pts}</td>`;
                     }
-                    row += `<td>${jug.totalGoles}</td><td class="td-total-puntos">${jug.totalPuntos}</td></tr>`;
+                    row += `<td>${jug.totalGoles}</td><td style="font-weight:bold; background:#3498db; color:white;">${jug.totalPuntos}</td></tr>`;
                     tbody.innerHTML += row;
                 });
-                if(count === 0) tbody.innerHTML = '<tr><td colspan="30">No hay datos visibles.</td></tr>';
-
+                if(count === 0) tbody.innerHTML = '<tr><td colspan="30">Sin datos.</td></tr>';
             } catch (err) { tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`; }
         }
 
-        // 3. TABLA GENERAL
         async function cargarTablaGeneral() {
             if(sessionStorage.getItem('esSoloSemanal') === 'true') return;
             const tbody = document.getElementById('tabla-general-tbody');
             tbody.innerHTML = '<tr><td colspan="20">Cargando...</td></tr>';
-            
             const formData = new FormData(); formData.append('accion', 'getTablaGeneral');
             try {
                 const data = await llamarAppsScript(formData);
@@ -527,10 +408,8 @@
                 for(let i=1; i<=17; i++) hHTML += `<th>J${i}</th>`;
                 hHTML += '<th>Total</th>';
                 headRow.innerHTML = hHTML;
-
                 data.tabla.forEach((row, i) => {
-                    let bg = (i===0)?'#fffbe6':(i===1)?'#f6f6f7':(i===2)?'#fff3e8':'';
-                    let tr = `<tr style="background:${bg}"><td><b>${i+1}</b></td>`;
+                    let tr = `<tr><td><b>${i+1}</b></td>`;
                     row.forEach(cell => tr += `<td>${cell}</td>`);
                     tr += '</tr>';
                     tbody.innerHTML += tr;
@@ -538,23 +417,19 @@
             } catch (err) { tbody.innerHTML = `<tr><td colspan="20">${err.message}</td></tr>`; }
         }
 
-        // 4. SALDOS
         async function cargarMisSaldos() {
-            if(sessionStorage.getItem('esSoloSemanal') === 'true') document.getElementById('saldo-temporada-card').style.display='none';
             const formData = new FormData();
             formData.append('accion', 'getMisSaldos');
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
             formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
-
             try {
                 const data = await llamarAppsScript(formData);
                 const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
                 if (data.saldos.temporada) {
                     document.getElementById('saldo-temporada-pagado').textContent = fmt.format(data.saldos.temporada.pagado);
-                    const db = data.saldos.temporada.debe;
                     const el = document.getElementById('saldo-temporada-debe');
-                    el.textContent = fmt.format(db);
-                    el.className = db > 0 ? 'valor debe' : 'valor pagado';
+                    el.textContent = fmt.format(data.saldos.temporada.debe);
+                    el.className = data.saldos.temporada.debe > 0 ? 'valor debe' : 'valor pagado';
                 }
                 if (data.saldos.semanal) document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
             } catch (err) { console.error(err); }
@@ -563,8 +438,10 @@
         async function llamarAppsScript(formData) {
             const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
             const text = await res.text();
-            try { return JSON.parse(text).status === 'ok' ? JSON.parse(text) : Promise.reject(JSON.parse(text)); }
-            catch (e) { throw new Error('Error de conexión con Google Sheets'); }
+            try { 
+                const obj = JSON.parse(text);
+                return obj.status === 'ok' ? obj : Promise.reject(obj); 
+            } catch (e) { throw new Error('Error en el servidor'); }
         }
         function mostrarLoader(show) { loader.style.display = show ? 'block' : 'none'; }
         function mostrarMensajeLogin(type, msg) {
