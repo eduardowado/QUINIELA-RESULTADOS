@@ -49,12 +49,11 @@
         .tab-content { display: none; padding: 25px; }
         .tab-content.active { display: block; }
 
-        /* --- ESTILOS DE TABLAS (MANTENIDOS) --- */
+        /* --- ESTILOS DE TABLAS ORIGINALES --- */
         .table-container { overflow: auto; max-width: 100%; max-height: 70vh; position: relative; }
         table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 0; }
         th, td { border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9em; white-space: nowrap; background-color: #fff; }
 
-        /* INMOVILIZAR FILAS Y COLUMNAS */
         thead th { position: sticky; top: 0; z-index: 20; background-color: #34495e; color: white; }
 
         #resultados-publicos-tabla thead tr:nth-child(1) th {
@@ -83,9 +82,10 @@
 
         .saldos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .saldo-card { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; }
-        .saldo-card .valor.debe { color: #e74c3c; font-size: 2.2em; font-weight: 700; }
-        .saldo-card .valor.pagado { color: #2ecc71; font-size: 2.2em; font-weight: 700; }
-        .saldo-card .valor.disponible { color: #3498db; font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor { font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor.debe { color: #e74c3c; }
+        .saldo-card .valor.pagado { color: #2ecc71; }
+        .saldo-card .valor.disponible { color: #3498db; }
 
         #loader { display: none; text-align: center; margin: 20px 0; font-weight: 500; color: #3498db; }
         #mensaje-login { padding: 15px; margin-top: 15px; border-radius: 6px; display: none; font-weight: 500; }
@@ -94,13 +94,16 @@
         @media (max-width: 600px) {
             .container { margin: 0; padding: 0; }
             .tab-nav { font-size: 0.8em; }
+            .tab-button { padding: 12px 10px; }
+            .tab-content { padding: 15px; }
             .saldos-container { grid-template-columns: 1fr; }
+            .table-container { max-height: 75vh; }
         }
     </style>
 </head>
 
 <body>
-    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
     <div class="container">
         <div id="login-screen">
             <h2>Resultados, Tablas y Saldos</h2>
@@ -112,10 +115,9 @@
             <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
             <div id="mensaje-login"></div>
         </div>
-
         <div id="main-content">
             <header>
-                <h1 id="welcome-message">¡Hola!</h1>
+                <h1 id="welcome-message">¡Hola, Jugador!</h1>
                 <button id="btn-logout">Salir</button>
             </header>
             <nav class="tab-nav">
@@ -138,10 +140,12 @@
                         <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                     </select>
                 </div>
+
                 <div class="puntos-total-banner">
                     <h3 id="mis-puntos-total-display">Total Puntos: 0</h3>
                     <div id="mis-goles-display" class="info-goles">Cargando goles...</div>
                 </div>
+
                 <div class="table-container">
                     <table id="mis-resultados-tabla">
                         <thead>
@@ -173,7 +177,7 @@
                     </table>
                 </div>
             </div>
-
+            
             <div id="tab-tabla-general" class="tab-content">
                 <h2>Tabla General (Temporada)</h2>
                 <div class="table-container">
@@ -183,20 +187,21 @@
                     </table>
                 </div>
             </div>
-
+            
             <div id="tab-saldos" class="tab-content">
                 <h2>Mis Saldos</h2>
                 <div class="saldos-container">
                     <div class="saldo-card" id="saldo-temporada-card">
                         <h3>Quiniela de Temporada</h3>
                         <p id="saldo-temporada-pagado" class="valor pagado">$0.00</p>
+                        <p style="font-size: 0.9em; color: #555;">Total Pagado</p>
                         <p id="saldo-temporada-debe" class="valor debe">$0.00</p>
-                        <p>Saldo Pendiente</p>
+                        <p style="font-size: 0.9em; color: #555;">Saldo Pendiente</p>
                     </div>
-                    <div class="saldo-card">
+                    <div class="saldo-card" id="saldo-semanal-card">
                         <h3>Quinielas Semanales</h3>
                         <p id="saldo-semanal-disponible" class="valor disponible">0</p>
-                        <p>Disponibles</p>
+                        <p style="font-size: 0.9em; color: #555;">Disponibles</p>
                     </div>
                 </div>
             </div>
@@ -205,7 +210,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"
         
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
@@ -213,6 +218,7 @@
         const btnLogin = document.getElementById('btn-login');
         const btnLogout = document.getElementById('btn-logout');
         const welcomeMessage = document.getElementById('welcome-message');
+        const mensajeLogin = document.getElementById('mensaje-login');
         const loader = document.getElementById('loader');
 
         const tabs = document.querySelectorAll('.tab-button');
@@ -220,30 +226,32 @@
 
         const jornadaSelectMisRes = document.getElementById('jornada-select-mis-resultados');
         const jornadaSelectPublica = document.getElementById('jornada-select-publica');
+        const btnTabGeneral = document.getElementById('btn-tab-general');
+        const saldoTemporadaCard = document.getElementById('saldo-temporada-card');
 
         document.addEventListener('DOMContentLoaded', () => {
             const nombre = sessionStorage.getItem('nombreUsuario');
-            if (nombre) {
-                mostrarPanel(nombre, sessionStorage.getItem('esSoloSemanal') === 'true');
-            }
+            if (nombre) mostrarPanel(nombre, sessionStorage.getItem('esSoloSemanal') === 'true');
         });
 
         btnLogin.addEventListener('click', async () => {
             const codigo = loginCodigoInput.value;
-            if (!codigo) return;
+            if (!codigo) { mostrarMensajeLogin('error', 'Ingresa tu código.'); return; }
             mostrarLoader(true);
             const formData = new FormData();
             formData.append('accion', 'loginParticipante');
             formData.append('codigo', codigo);
             try {
-                const data = await llamarAppsScript(formData);
+                const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+                const data = await res.json();
+                if(data.status !== 'ok') throw new Error(data.message);
                 sessionStorage.setItem('nombreUsuario', data.nombre);
                 const esSoloSemanal = (!data.codigoTemp || data.codigoTemp === "");
                 sessionStorage.setItem('codigoTemp', data.codigoTemp || ""); 
                 sessionStorage.setItem('codigoSem', data.codigoSem || "");
                 sessionStorage.setItem('esSoloSemanal', esSoloSemanal);
                 mostrarPanel(data.nombre, esSoloSemanal);
-            } catch (err) { alert(err.message); }
+            } catch (err) { mostrarMensajeLogin('error', err.message); }
             finally { mostrarLoader(false); }
         });
 
@@ -252,8 +260,16 @@
         function mostrarPanel(nombre, esSoloSemanal) {
             loginScreen.style.display = 'none'; mainContent.style.display = 'block';
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
-            if (esSoloSemanal) document.getElementById('btn-tab-general').classList.add('hidden');
-            cargarMisResultados();
+            if (esSoloSemanal) {
+                btnTabGeneral.classList.add('hidden'); saldoTemporadaCard.style.display = 'none'; 
+            } else {
+                btnTabGeneral.classList.remove('hidden'); saldoTemporadaCard.style.display = 'block';
+            }
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-tab="tab-mis-resultados"]').classList.add('active');
+            document.getElementById('tab-mis-resultados').classList.add('active');
+            cargarMisResultados(); 
         }
 
         tabs.forEach(tab => {
@@ -284,9 +300,12 @@
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
             formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
             try {
-                const data = await llamarAppsScript(formData);
+                const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+                const data = await res.json();
                 document.getElementById('mis-puntos-total-display').textContent = `Total Puntos: ${data.totalPuntos}`;
-                document.getElementById('mis-goles-display').textContent = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
+                let textoGoles = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
+                if (String(data.realTotalGoles) !== "-" && String(data.miTotalGoles) === String(data.realTotalGoles)) textoGoles += " ✅ (+3 pts)";
+                document.getElementById('mis-goles-display').innerHTML = textoGoles;
                 let tbody = document.getElementById('mis-resultados-tbody');
                 tbody.innerHTML = '';
                 data.comparativa.forEach((item, index) => {
@@ -303,30 +322,30 @@
             formData.append('accion', 'getResultadosPublicos');
             formData.append('jornada', jornadaSelectPublica.value);
             try {
-                const data = await llamarAppsScript(formData);
+                const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+                const data = await res.json();
                 let thead = document.getElementById('resultados-publicos-thead');
                 let tbody = document.getElementById('resultados-publicos-tbody');
                 
-                // Cabeceras con nombres de partidos (Restaurado)
-                let header1 = '<tr><th>Participante</th>';
-                data.partidos.forEach((p, i) => { header1 += `<th colspan="3">P${i+1}: ${p.local} vs ${p.visita}</th>`; });
-                header1 += '<th>Goles</th><th>Pts</th></tr>';
+                let h1 = '<tr><th class="td-jugador">Participante</th>';
+                data.partidos.forEach((p, i) => { h1 += `<th colspan="3">P${i+1}: ${p.local} vs ${p.visita}</th>`; });
+                h1 += '<th>Goles</th><th>Pts</th></tr>';
 
-                let header2 = '<tr><th>RESULTADO REAL</th>';
+                let h2 = '<tr><th>RESULTADO REAL</th>';
                 data.resultadosReales.forEach((r, i) => {
                     if (i % 2 === 0) {
                         const val = (r!=="" || data.resultadosReales[i+1]!=="") ? r+'-'+data.resultadosReales[i+1] : '-';
-                        header2 += `<td colspan="3">${val}</td>`;
+                        h2 += `<td colspan="3">${val}</td>`;
                     }
                 });
-                header2 += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
-                thead.innerHTML = header1 + header2;
+                h2 += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
+                thead.innerHTML = h1 + h2;
 
                 tbody.innerHTML = '';
                 data.tabla.forEach(jug => {
                     let tipoRival = (jug.tipoJugador || "").toLowerCase().trim();
                     
-                    // FILTRO "AMBOS" (Actualizado)
+                    // MEJORA: FILTRO PARA MOSTRAR "AMBOS"
                     if (esSoloSemanal) { 
                         if (tipoRival !== 'semanal' && tipoRival !== 'ambos') return; 
                     } else { 
@@ -344,4 +363,49 @@
                     tbody.innerHTML += row;
                 });
             } catch (e) { }
- 
+        }
+
+        async function cargarTablaGeneral() {
+            const formData = new FormData(); formData.append('accion', 'getTablaGeneral');
+            try {
+                const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+                const data = await res.json();
+                let head = '<th>#</th><th>Nombre</th>';
+                for(let i=1; i<=17; i++) head += `<th>J${i}</th>`;
+                head += '<th>Total</th>';
+                document.querySelector('#tabla-general-tabla thead tr').innerHTML = head;
+                let b = '';
+                data.tabla.forEach((row, i) => {
+                    b += `<tr><td><b>${i+1}</b></td>${row.map(c => `<td>${c}</td>`).join('')}</tr>`;
+                });
+                document.getElementById('tabla-general-tbody').innerHTML = b;
+            } catch (e) { }
+        }
+
+        async function cargarMisSaldos() {
+            const formData = new FormData();
+            formData.append('accion', 'getMisSaldos');
+            formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
+            formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
+            try {
+                const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
+                const data = await res.json();
+                const f = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
+                if (data.saldos.temporada) {
+                    document.getElementById('saldo-temporada-pagado').textContent = f.format(data.saldos.temporada.pagado);
+                    let el = document.getElementById('saldo-temporada-debe');
+                    el.textContent = f.format(data.saldos.temporada.debe);
+                    el.className = data.saldos.temporada.debe > 0 ? 'valor debe' : 'valor pagado';
+                }
+                document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal ? data.saldos.semanal.saldo : 0;
+            } catch (e) { }
+        }
+
+        function mostrarLoader(s) { loader.style.display = s ? 'block' : 'none'; }
+        function mostrarMensajeLogin(t, m) {
+            if(!t) { mensajeLogin.style.display='none'; return; }
+            mensajeLogin.className = t; mensajeLogin.textContent = m; mensajeLogin.style.display='block';
+        }
+    </script>
+</body>
+</html>
