@@ -1,4 +1,18 @@
-btn-regreso-fijo {
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados y Saldos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+
+        /* Botón Regreso Fijo */
+        .btn-regreso-fijo {
             position: fixed; top: 20px; right: 20px;
             background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff; text-decoration: none;
             padding: 10px 15px; border-radius: 30px; font-family: sans-serif; font-weight: bold; font-size: 14px;
@@ -35,11 +49,12 @@ btn-regreso-fijo {
         .tab-content { display: none; padding: 25px; }
         .tab-content.active { display: block; }
 
-        /* --- ESTILOS DE TABLAS --- */
+        /* --- ESTILOS DE TABLAS (MANTENIDOS) --- */
         .table-container { overflow: auto; max-width: 100%; max-height: 70vh; position: relative; }
         table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 0; }
         th, td { border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9em; white-space: nowrap; background-color: #fff; }
 
+        /* INMOVILIZAR FILAS Y COLUMNAS */
         thead th { position: sticky; top: 0; z-index: 20; background-color: #34495e; color: white; }
 
         #resultados-publicos-tabla thead tr:nth-child(1) th {
@@ -68,9 +83,9 @@ btn-regreso-fijo {
 
         .saldos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .saldo-card { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; }
-        .valor.debe { color: #e74c3c; font-size: 2.2em; font-weight: 700; }
-        .valor.pagado { color: #2ecc71; font-size: 2.2em; font-weight: 700; }
-        .valor.disponible { color: #3498db; font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor.debe { color: #e74c3c; font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor.pagado { color: #2ecc71; font-size: 2.2em; font-weight: 700; }
+        .saldo-card .valor.disponible { color: #3498db; font-size: 2.2em; font-weight: 700; }
 
         #loader { display: none; text-align: center; margin: 20px 0; font-weight: 500; color: #3498db; }
         #mensaje-login { padding: 15px; margin-top: 15px; border-radius: 6px; display: none; font-weight: 500; }
@@ -100,7 +115,7 @@ btn-regreso-fijo {
 
         <div id="main-content">
             <header>
-                <h1 id="welcome-message">¡Hola, Jugador!</h1>
+                <h1 id="welcome-message">¡Hola!</h1>
                 <button id="btn-logout">Salir</button>
             </header>
             <nav class="tab-nav">
@@ -123,21 +138,14 @@ btn-regreso-fijo {
                         <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                     </select>
                 </div>
-
                 <div class="puntos-total-banner">
                     <h3 id="mis-puntos-total-display">Total Puntos: 0</h3>
                     <div id="mis-goles-display" class="info-goles">Cargando goles...</div>
                 </div>
-
                 <div class="table-container">
                     <table id="mis-resultados-tabla">
                         <thead>
-                            <tr>
-                                <th>Partido</th>
-                                <th>Mi Pronóstico</th>
-                                <th>Resultado Real</th>
-                                <th>Puntos</th>
-                            </tr>
+                            <tr><th>Partido</th><th>Mi Pronóstico</th><th>Resultado Real</th><th>Puntos</th></tr>
                         </thead>
                         <tbody id="mis-resultados-tbody"></tbody>
                     </table>
@@ -165,37 +173,30 @@ btn-regreso-fijo {
                     </table>
                 </div>
             </div>
-            
+
             <div id="tab-tabla-general" class="tab-content">
                 <h2>Tabla General (Temporada)</h2>
                 <div class="table-container">
                     <table id="tabla-general-tabla">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>#</th><th>Nombre</th><th>Total</th></tr></thead>
                         <tbody id="tabla-general-tbody"></tbody>
                     </table>
                 </div>
             </div>
-            
+
             <div id="tab-saldos" class="tab-content">
                 <h2>Mis Saldos</h2>
                 <div class="saldos-container">
                     <div class="saldo-card" id="saldo-temporada-card">
                         <h3>Quiniela de Temporada</h3>
                         <p id="saldo-temporada-pagado" class="valor pagado">$0.00</p>
-                        <p style="font-size: 0.9em; color: #555;">Total Pagado</p>
                         <p id="saldo-temporada-debe" class="valor debe">$0.00</p>
-                        <p style="font-size: 0.9em; color: #555;">Saldo Pendiente</p>
+                        <p>Saldo Pendiente</p>
                     </div>
-                    <div class="saldo-card" id="saldo-semanal-card">
+                    <div class="saldo-card">
                         <h3>Quinielas Semanales</h3>
                         <p id="saldo-semanal-disponible" class="valor disponible">0</p>
-                        <p style="font-size: 0.9em; color: #555;">Disponibles</p>
+                        <p>Disponibles</p>
                     </div>
                 </div>
             </div>
@@ -212,7 +213,6 @@ btn-regreso-fijo {
         const btnLogin = document.getElementById('btn-login');
         const btnLogout = document.getElementById('btn-logout');
         const welcomeMessage = document.getElementById('welcome-message');
-        const mensajeLogin = document.getElementById('mensaje-login');
         const loader = document.getElementById('loader');
 
         const tabs = document.querySelectorAll('.tab-button');
@@ -220,21 +220,18 @@ btn-regreso-fijo {
 
         const jornadaSelectMisRes = document.getElementById('jornada-select-mis-resultados');
         const jornadaSelectPublica = document.getElementById('jornada-select-publica');
-        const btnTabGeneral = document.getElementById('btn-tab-general');
-        const saldoTemporadaCard = document.getElementById('saldo-temporada-card');
 
         document.addEventListener('DOMContentLoaded', () => {
             const nombre = sessionStorage.getItem('nombreUsuario');
             if (nombre) {
-                const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
-                mostrarPanel(nombre, esSoloSemanal);
+                mostrarPanel(nombre, sessionStorage.getItem('esSoloSemanal') === 'true');
             }
         });
 
         btnLogin.addEventListener('click', async () => {
             const codigo = loginCodigoInput.value;
-            if (!codigo) { mostrarMensajeLogin('error', 'Ingresa tu código.'); return; }
-            mostrarLoader(true); mostrarMensajeLogin(false);
+            if (!codigo) return;
+            mostrarLoader(true);
             const formData = new FormData();
             formData.append('accion', 'loginParticipante');
             formData.append('codigo', codigo);
@@ -246,37 +243,21 @@ btn-regreso-fijo {
                 sessionStorage.setItem('codigoSem', data.codigoSem || "");
                 sessionStorage.setItem('esSoloSemanal', esSoloSemanal);
                 mostrarPanel(data.nombre, esSoloSemanal);
-            } catch (err) { mostrarMensajeLogin('error', err.message); }
+            } catch (err) { alert(err.message); }
             finally { mostrarLoader(false); }
         });
 
-        btnLogout.addEventListener('click', () => {
-            sessionStorage.clear();
-            mainContent.style.display = 'none'; loginScreen.style.display = 'block';
-            loginCodigoInput.value = '';
-        });
+        btnLogout.addEventListener('click', () => { sessionStorage.clear(); location.reload(); });
 
         function mostrarPanel(nombre, esSoloSemanal) {
             loginScreen.style.display = 'none'; mainContent.style.display = 'block';
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
-            if (esSoloSemanal) {
-                btnTabGeneral.classList.add('hidden'); saldoTemporadaCard.style.display = 'none'; 
-            } else {
-                btnTabGeneral.classList.remove('hidden'); saldoTemporadaCard.style.display = 'block';
-            }
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
-            const tabDefault = document.querySelector('[data-tab="tab-mis-resultados"]');
-            if(tabDefault) {
-                tabDefault.classList.add('active');
-                document.getElementById('tab-mis-resultados').classList.add('active');
-                cargarMisResultados(); 
-            }
+            if (esSoloSemanal) document.getElementById('btn-tab-general').classList.add('hidden');
+            cargarMisResultados();
         }
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                if(tab.classList.contains('hidden')) return;
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
@@ -297,143 +278,70 @@ btn-regreso-fijo {
         jornadaSelectPublica.addEventListener('change', cargarResultadosPublicos);
 
         async function cargarMisResultados() {
-            const jornada = jornadaSelectMisRes.value;
-            const tbody = document.getElementById('mis-resultados-tbody');
-            const totalDisplay = document.getElementById('mis-puntos-total-display');
-            const golesDisplay = document.getElementById('mis-goles-display');
-            tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
             const formData = new FormData();
             formData.append('accion', 'getMisResultados');
-            formData.append('jornada', jornada);
+            formData.append('jornada', jornadaSelectMisRes.value);
             formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
             formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
             try {
                 const data = await llamarAppsScript(formData);
+                document.getElementById('mis-puntos-total-display').textContent = `Total Puntos: ${data.totalPuntos}`;
+                document.getElementById('mis-goles-display').textContent = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
+                let tbody = document.getElementById('mis-resultados-tbody');
                 tbody.innerHTML = '';
-                totalDisplay.textContent = `Total Puntos: ${data.totalPuntos}`;
-                let textoGoles = `Goles: ${data.miTotalGoles} (Tú) vs ${data.realTotalGoles} (Real)`;
-                if (String(data.realTotalGoles) !== "-" && String(data.miTotalGoles) === String(data.realTotalGoles)) {
-                    textoGoles += " ✅ (+3 pts)";
-                }
-                golesDisplay.innerHTML = textoGoles;
                 data.comparativa.forEach((item, index) => {
-                    const tr = document.createElement('tr');
-                    let clasePuntos = item.puntos >= 3 ? 'background-color: #d4edda;' : item.puntos > 0 ? 'background-color: #fff3cd;' : '';
                     let esComodin = (index + 1) === data.miComodin;
-                    tr.innerHTML = `<td class="partido-col">${item.partido}</td><td>${item.pronostico}</td><td>${item.real}</td><td class="${esComodin?'comodin-cell':''}" style="${clasePuntos}">${item.puntos}</td>`;
-                    tbody.appendChild(tr);
+                    let style = item.puntos >= 3 ? 'background:#d4edda;' : item.puntos > 0 ? 'background:#fff3cd;' : '';
+                    tbody.innerHTML += `<tr><td>${item.partido}</td><td>${item.pronostico}</td><td style="font-weight:bold;">${item.real}</td><td class="${esComodin?'comodin-cell':''}" style="${style}">${item.puntos}</td></tr>`;
                 });
-            } catch (err) { tbody.innerHTML = `<tr><td colspan="4">${err.message}</td></tr>`; }
+            } catch (e) { }
         }
 
-        // ============================================================
-        // LÓGICA DE FILTRADO ACTUALIZADA (AMBOS VISIBLES)
-        // ============================================================
         async function cargarResultadosPublicos() {
-            const jornada = jornadaSelectPublica.value;
             const esSoloSemanal = sessionStorage.getItem('esSoloSemanal') === 'true';
-            const tbody = document.getElementById('resultados-publicos-tbody');
-            const thead = document.getElementById('resultados-publicos-thead');
-            tbody.innerHTML = '<tr><td colspan="20">Cargando...</td></tr>';
             const formData = new FormData();
             formData.append('accion', 'getResultadosPublicos');
-            formData.append('jornada', jornada);
+            formData.append('jornada', jornadaSelectPublica.value);
             try {
                 const data = await llamarAppsScript(formData);
-                let headerHTML = '<tr><th class="td-jugador">Participante</th>';
-                data.partidos.forEach((p, i) => { headerHTML += `<th colspan="3">P${i+1}</th>`; });
-                headerHTML += '<th>Goles</th><th>Pts</th></tr>';
-                let subHeader = '<tr><th>MARCADOR REAL</th>';
+                let thead = document.getElementById('resultados-publicos-thead');
+                let tbody = document.getElementById('resultados-publicos-tbody');
+                
+                // Cabeceras con nombres de partidos (Restaurado)
+                let header1 = '<tr><th>Participante</th>';
+                data.partidos.forEach((p, i) => { header1 += `<th colspan="3">P${i+1}: ${p.local} vs ${p.visita}</th>`; });
+                header1 += '<th>Goles</th><th>Pts</th></tr>';
+
+                let header2 = '<tr><th>RESULTADO REAL</th>';
                 data.resultadosReales.forEach((r, i) => {
                     if (i % 2 === 0) {
-                        const res = (r!=="" || data.resultadosReales[i+1]!=="") ? r+'-'+data.resultadosReales[i+1] : '-';
-                        subHeader += `<td colspan="3">${res}</td>`;
+                        const val = (r!=="" || data.resultadosReales[i+1]!=="") ? r+'-'+data.resultadosReales[i+1] : '-';
+                        header2 += `<td colspan="3">${val}</td>`;
                     }
                 });
-                subHeader += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
-                thead.innerHTML = headerHTML + subHeader;
-                tbody.innerHTML = '';
+                header2 += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
+                thead.innerHTML = header1 + header2;
 
-                let count = 0;
+                tbody.innerHTML = '';
                 data.tabla.forEach(jug => {
-                    // Normalizamos el tipo de jugador
                     let tipoRival = (jug.tipoJugador || "").toLowerCase().trim();
                     
-                    // FILTRO: "Ambos" es visible para todos
+                    // FILTRO "AMBOS" (Actualizado)
                     if (esSoloSemanal) { 
                         if (tipoRival !== 'semanal' && tipoRival !== 'ambos') return; 
                     } else { 
                         if (tipoRival !== 'temporada' && tipoRival !== 'ambos') return; 
                     }
 
-                    count++;
-                    let row = `<tr><td class="td-jugador">${jug.nombre}</td>`;
+                    let row = `<tr><td>${jug.nombre}</td>`;
                     let comodinIdx = (jug.comodinIdx) ? (parseInt(jug.comodinIdx) - 1) : -1;
                     for (let p=0; p<9; p++) {
                         let pts = jug.puntos[p];
-                        let style = (pts>=3)?'background:#d4edda;':(pts>=1)?'background:#fff3cd;':'';
-                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${p===comodinIdx?'comodin-cell':''}" style="${style}">${pts}</td>`;
+                        let bg = (pts>=3)?'#d4edda':(pts>=1)?'#fff3cd':'#fff';
+                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${p===comodinIdx?'comodin-cell':''}" style="background:${bg}">${pts}</td>`;
                     }
                     row += `<td>${jug.totalGoles}</td><td style="font-weight:bold; background:#3498db; color:white;">${jug.totalPuntos}</td></tr>`;
                     tbody.innerHTML += row;
                 });
-                if(count === 0) tbody.innerHTML = '<tr><td colspan="30">Sin datos.</td></tr>';
-            } catch (err) { tbody.innerHTML = `<tr><td colspan="30">${err.message}</td></tr>`; }
-        }
-
-        async function cargarTablaGeneral() {
-            if(sessionStorage.getItem('esSoloSemanal') === 'true') return;
-            const tbody = document.getElementById('tabla-general-tbody');
-            tbody.innerHTML = '<tr><td colspan="20">Cargando...</td></tr>';
-            const formData = new FormData(); formData.append('accion', 'getTablaGeneral');
-            try {
-                const data = await llamarAppsScript(formData);
-                tbody.innerHTML = '';
-                const headRow = document.querySelector('#tabla-general-tabla thead tr');
-                let hHTML = '<th>#</th><th>Nombre</th>';
-                for(let i=1; i<=17; i++) hHTML += `<th>J${i}</th>`;
-                hHTML += '<th>Total</th>';
-                headRow.innerHTML = hHTML;
-                data.tabla.forEach((row, i) => {
-                    let tr = `<tr><td><b>${i+1}</b></td>`;
-                    row.forEach(cell => tr += `<td>${cell}</td>`);
-                    tr += '</tr>';
-                    tbody.innerHTML += tr;
-                });
-            } catch (err) { tbody.innerHTML = `<tr><td colspan="20">${err.message}</td></tr>`; }
-        }
-
-        async function cargarMisSaldos() {
-            const formData = new FormData();
-            formData.append('accion', 'getMisSaldos');
-            formData.append('codigoTemp', sessionStorage.getItem('codigoTemp'));
-            formData.append('codigoSem', sessionStorage.getItem('codigoSem'));
-            try {
-                const data = await llamarAppsScript(formData);
-                const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
-                if (data.saldos.temporada) {
-                    document.getElementById('saldo-temporada-pagado').textContent = fmt.format(data.saldos.temporada.pagado);
-                    const el = document.getElementById('saldo-temporada-debe');
-                    el.textContent = fmt.format(data.saldos.temporada.debe);
-                    el.className = data.saldos.temporada.debe > 0 ? 'valor debe' : 'valor pagado';
-                }
-                if (data.saldos.semanal) document.getElementById('saldo-semanal-disponible').textContent = data.saldos.semanal.saldo;
-            } catch (err) { console.error(err); }
-        }
-
-        async function llamarAppsScript(formData) {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
-            const text = await res.text();
-            try { 
-                const obj = JSON.parse(text);
-                return obj.status === 'ok' ? obj : Promise.reject(obj); 
-            } catch (e) { throw new Error('Error en el servidor'); }
-        }
-        function mostrarLoader(show) { loader.style.display = show ? 'block' : 'none'; }
-        function mostrarMensajeLogin(type, msg) {
-            if(!type) { mensajeLogin.style.display='none'; return; }
-            mensajeLogin.className = type; mensajeLogin.textContent = msg; mensajeLogin.style.display='block';
-        }
-    </script>
-</body>
-</html>
+            } catch (e) { }
+ 
