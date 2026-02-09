@@ -49,32 +49,54 @@
         .tab-content { display: none; padding: 25px; }
         .tab-content.active { display: block; }
 
-        /* --- ESTILOS DE TABLAS ORIGINALES --- */
         .table-container { overflow: auto; max-width: 100%; max-height: 70vh; position: relative; }
         table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 0; }
         th, td { border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9em; white-space: nowrap; background-color: #fff; }
 
         thead th { position: sticky; top: 0; z-index: 20; background-color: #34495e; color: white; }
 
-        #resultados-publicos-tabla thead tr:nth-child(1) th {
-            position: sticky; top: 0; z-index: 20; height: 45px; background-color: #34495e; color: white;
+        /* ============================================================
+           SOLO MODIFICACIÓN DE COLUMNAS FIJAS (TAMAÑO REDUCIDO)
+           ============================================================ */
+        
+        /* Columna 1 (#) */
+        #tabla-general-tabla th:nth-child(1), 
+        #tabla-general-tabla td:nth-child(1) {
+            position: sticky; left: 0; z-index: 10; background-color: #f9f9f9; width: 35px; min-width: 35px;
         }
 
-        #resultados-publicos-tabla thead tr:nth-child(2) th,
-        #resultados-publicos-tabla thead tr:nth-child(2) td {
-            position: sticky; top: 45px; z-index: 20; background-color: #f4f6f8; color: #e74c3c; font-weight: 700;
-            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
-        }
-
+        /* Columna 2 (Nombre) - Ajuste de tamaño solicitado */
+        #tabla-general-tabla th:nth-child(2), 
+        #tabla-general-tabla td:nth-child(2),
         #resultados-publicos-tabla th:first-child,
         #resultados-publicos-tabla td:first-child {
-            position: sticky; left: 0; z-index: 15; border-right: 2px solid #bbb; background-color: #fff;
+            position: sticky; left: 35px; z-index: 10; background-color: #ffffff; border-right: 2px solid #bbb; 
+            width: 100px; min-width: 100px; max-width: 100px; /* Reducido */
+            font-size: 0.8em; /* Letra más chica */
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        #resultados-publicos-tabla thead tr:nth-child(1) th:first-child { z-index: 30; left: 0; top: 0; background-color: #34495e; }
+        /* Ajuste específico para Global (solo 1ra columna fija) */
+        #resultados-publicos-tabla th:first-child,
+        #resultados-publicos-tabla td:first-child {
+            left: 0;
+        }
+
+        /* Esquinas superiores fijas */
+        #tabla-general-tabla thead th:nth-child(1) { z-index: 35; left: 0; top: 0; background-color: #34495e !important; }
+        #tabla-general-tabla thead th:nth-child(2) { z-index: 35; left: 35px; top: 0; background-color: #34495e !important; }
+        #resultados-publicos-tabla thead th:first-child { z-index: 35; left: 0; top: 0; background-color: #34495e !important; }
+
+        /* Estilos de encabezados Globales (Doble fila) */
+        #resultados-publicos-tabla thead tr:nth-child(1) th { position: sticky; top: 0; z-index: 20; height: 45px; background-color: #34495e; color: white; }
+        #resultados-publicos-tabla thead tr:nth-child(2) th,
+        #resultados-publicos-tabla thead tr:nth-child(2) td { position: sticky; top: 45px; z-index: 20; background-color: #f4f6f8; color: #e74c3c; font-weight: 700; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
         #resultados-publicos-tabla thead tr:nth-child(2) th:first-child { z-index: 30; left: 0; top: 45px; background-color: #f4f6f8; color: #e74c3c; }
 
-        #resultados-publicos-tabla tbody td:first-child { font-weight: 700; color: #2c3e50; text-align: left; }
+        /* Estilo desempate */
+        .th-desempate { font-size: 0.75em !important; line-height: 1.1; padding: 5px 2px !important; }
 
         .puntos-total-banner { background-color: #eaf2f8; border: 1px solid #bdc3c7; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; color: #2c3e50; }
         .comodin-cell { border: 2px solid #f1c40f !important; position: relative; background-color: #fff9db !important; }
@@ -94,16 +116,13 @@
         @media (max-width: 600px) {
             .container { margin: 0; padding: 0; }
             .tab-nav { font-size: 0.8em; }
-            .tab-button { padding: 12px 10px; }
-            .tab-content { padding: 15px; }
-            .saldos-container { grid-template-columns: 1fr; }
             .table-container { max-height: 75vh; }
         }
     </style>
 </head>
 
 <body>
-<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo" id="btn-regresar">↩ Regresar</a>
     <div class="container">
         <div id="login-screen">
             <h2>Resultados, Tablas y Saldos</h2>
@@ -115,6 +134,7 @@
             <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
             <div id="mensaje-login"></div>
         </div>
+
         <div id="main-content">
             <header>
                 <h1 id="welcome-message">¡Hola, Jugador!</h1>
@@ -140,17 +160,13 @@
                         <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                     </select>
                 </div>
-
                 <div class="puntos-total-banner">
                     <h3 id="mis-puntos-total-display">Total Puntos: 0</h3>
                     <div id="mis-goles-display" class="info-goles">Cargando goles...</div>
                 </div>
-
                 <div class="table-container">
                     <table id="mis-resultados-tabla">
-                        <thead>
-                            <tr><th>Partido</th><th>Mi Pronóstico</th><th>Resultado Real</th><th>Puntos</th></tr>
-                        </thead>
+                        <thead><tr><th>Partido</th><th>Mi Pronóstico</th><th>Resultado Real</th><th>Puntos</th></tr></thead>
                         <tbody id="mis-resultados-tbody"></tbody>
                     </table>
                 </div>
@@ -182,7 +198,7 @@
                 <h2>Tabla General (Temporada)</h2>
                 <div class="table-container">
                     <table id="tabla-general-tabla">
-                        <thead><tr><th>#</th><th>Nombre</th><th>Total</th></tr></thead>
+                        <thead><tr id="tabla-general-header-row"></tr></thead>
                         <tbody id="tabla-general-tbody"></tbody>
                     </table>
                 </div>
@@ -210,7 +226,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
         
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
@@ -255,10 +271,18 @@
             finally { mostrarLoader(false); }
         });
 
-        btnLogout.addEventListener('click', () => { sessionStorage.clear(); location.reload(); });
+        btnLogout.addEventListener('click', () => { 
+            sessionStorage.clear(); 
+            const btnReg = document.getElementById('btn-regresar');
+            if(btnReg) btnReg.style.display = 'block';
+            location.reload(); 
+        });
 
         function mostrarPanel(nombre, esSoloSemanal) {
             loginScreen.style.display = 'none'; mainContent.style.display = 'block';
+            const btnReg = document.getElementById('btn-regresar');
+            if(btnReg) btnReg.style.display = 'none';
+
             welcomeMessage.textContent = `¡Hola, ${nombre}!`;
             if (esSoloSemanal) {
                 btnTabGeneral.classList.add('hidden'); saldoTemporadaCard.style.display = 'none'; 
@@ -344,8 +368,6 @@
                 tbody.innerHTML = '';
                 data.tabla.forEach(jug => {
                     let tipoRival = (jug.tipoJugador || "").toLowerCase().trim();
-                    
-                    // MEJORA: FILTRO PARA MOSTRAR "AMBOS"
                     if (esSoloSemanal) { 
                         if (tipoRival !== 'semanal' && tipoRival !== 'ambos') return; 
                     } else { 
@@ -370,10 +392,14 @@
             try {
                 const res = await fetch(SCRIPT_URL, {method:'POST', body:formData});
                 const data = await res.json();
+                
                 let head = '<th>#</th><th>Nombre</th>';
                 for(let i=1; i<=17; i++) head += `<th>J${i}</th>`;
                 head += '<th>Total</th>';
-                document.querySelector('#tabla-general-tabla thead tr').innerHTML = head;
+                head += '<th class="th-desempate">M. Exacto<br>3 Pts</th>';
+                head += '<th class="th-desempate">M. Resultado<br>1 Pt</th>';
+                document.getElementById('tabla-general-header-row').innerHTML = head;
+                
                 let b = '';
                 data.tabla.forEach((row, i) => {
                     b += `<tr><td><b>${i+1}</b></td>${row.map(c => `<td>${c}</td>`).join('')}</tr>`;
