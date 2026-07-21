@@ -66,11 +66,15 @@
 
         thead th { position: sticky; top: 0; z-index: 60; background-color: #34495e !important; color: white !important; font-weight: bold; }
         
-        .col-num { position: sticky; left: 0; z-index: 70; background-color: #eee !important; width: 30px; font-weight: bold; }
+        .col-num { position: sticky; left: 0; z-index: 70; background-color: #eee !important; width: 30px; font-weight: bold; vertical-align: middle; }
+        
+        /* MODIFICACIÓN EN COLUMNA DE NOMBRES: AJUSTE DE TEXTO Y ALINEACIÓN */
         .col-nombre { 
             position: sticky; left: 30px; z-index: 70; background-color: #f8f9fa !important;
-            min-width: 85px; max-width: 85px; width: 85px; text-align: left !important;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75em !important; border-right: 2px solid #bbb !important;
+            min-width: 85px; max-width: 85px; width: 85px; 
+            text-align: left !important; vertical-align: middle; 
+            white-space: normal; word-wrap: break-word; line-height: 1.2;
+            font-size: 0.75em !important; border-right: 2px solid #bbb !important;
         }
         
         /* Asegurar que los encabezados sticky sean AZULES */
@@ -111,7 +115,7 @@
 
         @media (max-width: 600px) {
             .container { margin: 0; padding: 0; }
-            .col-nombre { width: 75px; min-width: 75px; }
+            .col-nombre { width: 75px; min-width: 75px; max-width: 75px; }
             header h1 { font-size: 1em; }
         }
     </style>
