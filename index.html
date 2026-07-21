@@ -1,433 +1,847 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados y Saldos</title>
+    <title>Panel de Administrador - Quiniela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
-
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; -webkit-font-smoothing: antialiased; }
+        
+        /* --- Estilos Generales --- */
+        .admin-panel { max-width: 950px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
+        header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; position: relative; }
+        header h1 { margin: 0; font-size: 1.5em; }
+        
         .btn-regreso-fijo {
-            position: fixed; top: 20px; right: 20px;
-            background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff; text-decoration: none;
-            padding: 10px 15px; border-radius: 30px; font-weight: bold; font-size: 14px;
-            z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+            position: absolute; top: 18px; right: 20px;
+            background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff;
+            text-decoration: none; padding: 8px 15px; border-radius: 30px; 
+            font-weight: bold; font-size: 13px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
         }
+        .btn-regreso-fijo:hover { background-color: #ffb74d; transform: scale(1.05); }
 
-        .container { max-width: 95%; margin: 20px auto; padding: 0 15px; }
-
-        header {
-            background-color: #2c3e50; color: white; padding: 20px 25px;
-            border-radius: 12px 12px 0 0; display: flex;
-            justify-content: space-between; align-items: center;
-        }
-        header h1 { margin: 0; font-size: 1.3em; }
-
-        #btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
-
-        #login-screen { 
-            padding: 40px 30px; text-align: center; background: #fff; border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 80px auto; max-width: 400px; 
-        }
-        #login-screen h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.8em; }
-        #login-codigo { 
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; 
-            font-size: 1em; box-sizing: border-box; margin-bottom: 20px; text-align: center;
-        }
-        button.btn-primary { 
-            background-color: #3498db; color: white; padding: 12px; border-radius: 6px; 
-            border: none; font-weight: 700; cursor: pointer; transition: 0.3s; width: 100%; font-size: 1em;
-        }
-
-        #main-content { display: none; background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.07); overflow: hidden; }
-
-        .tab-nav { display: flex; background-color: #ecf0f1; overflow-x: auto; }
-        .tab-button { padding: 14px 15px; cursor: pointer; background-color: transparent; border: none; color: #7f8c8d; font-size: 0.85em; font-weight: 700; flex-grow: 1; border-bottom: 3px solid transparent; white-space: nowrap; }
-        .tab-button.active { color: #34495e; border-bottom: 3px solid #3498db; }
-        .tab-content { display: none; padding: 20px; }
+        /* --- Pestañas --- */
+        .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .tab-nav::-webkit-scrollbar { display: none; }
+        .tab-button { padding: 14px 20px; cursor: pointer; background-color: transparent; border: none; color: #ecf0f1; font-size: 0.9em; font-weight: 500; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tab-button:hover { background-color: #3b536b; }
+        .tab-button.active { color: white; border-bottom: 3px solid #3498db; }
+        .tab-content { display: none; padding: 25px; }
         .tab-content.active { display: block; }
 
-        /* SELECTORES MODERNOS */
-        select {
-            appearance: none; background-color: #fff; border: 2px solid #e0e6ed; border-radius: 8px;
-            padding: 10px 35px 10px 15px; font-size: 1em; color: #2c3e50; cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%233498db%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; background-size: 12px auto;
-        }
-
-        /* TABLAS Y ENCABEZADOS UNIFORMES */
-        .table-container { overflow: auto; max-width: 100%; max-height: 70vh; border: 1px solid #ddd; position: relative; }
-        table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        th, td { padding: 10px 8px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; font-size: 0.88em; text-align: center; white-space: nowrap; background: #fff; }
-
-        thead th { position: sticky; top: 0; z-index: 60; background-color: #34495e !important; color: white !important; font-weight: bold; }
+        /* --- Formularios y Listas --- */
+        .form-section { background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px; }
+        .form-section h3 { margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; font-family: inherit; }
         
-        .col-num { position: sticky; left: 0; z-index: 70; background-color: #eee !important; width: 30px; font-weight: bold; vertical-align: middle; }
-        
-        /* MODIFICACIÓN EN COLUMNA DE NOMBRES: AJUSTE DE TEXTO Y ALINEACIÓN */
-        .col-nombre { 
-            position: sticky; left: 30px; z-index: 70; background-color: #f8f9fa !important;
-            min-width: 85px; max-width: 85px; width: 85px; 
-            text-align: left !important; vertical-align: middle; 
-            white-space: normal; word-wrap: break-word; line-height: 1.2;
-            font-size: 0.75em !important; border-right: 2px solid #bbb !important;
+        button { padding: 12px 20px; font-size: 1em; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background-color: #3498db; color: white; }
+        .btn-secondary { background-color: #2ecc71; color: white; }
+        .btn-warning { background-color: #ffb300; color: white; }
+        .btn-danger { background-color: #e74c3c; color: white; }
+
+        #lista-jugadores, #lista-semanal-dinamica { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; background: #fff; padding: 10px; }
+        .jugador-item, .list-item { padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .jugador-item:hover, .list-item:hover { background-color: #f9f9f9; }
+
+        /* --- Loader y Mensaje --- */
+        #admin-loader { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.85); z-index: 10000; 
+            flex-direction: column; justify-content: center; align-items: center; 
         }
-        
-        /* Asegurar que los encabezados sticky sean AZULES */
-        thead th.col-num, thead th.col-nombre { 
-            z-index: 110; background-color: #34495e !important; color: white !important; 
-        }
-
-        /* INMOVILIZACIÓN FILA 2 (RESULTADOS REALES) */
-        #resultados-publicos-thead tr:nth-child(2) th,
-        #resultados-publicos-thead tr:nth-child(2) td { 
-            position: sticky; top: 38px; z-index: 95; 
-            background-color: #d1d8e0 !important; color: #000 !important; font-weight: 900 !important; border-bottom: 2px solid #2c3e50;
-        }
-        #resultados-publicos-thead tr:nth-child(2) th:first-child { left: 0; z-index: 120; }
-        #resultados-publicos-thead tr:nth-child(2) td.col-nombre { left: 30px; z-index: 120; }
-
-        /* TENDENCIA ▲ ▼ */
-        .subio { color: #2ecc71; font-weight: bold; }
-        .bajo { color: #e74c3c; font-weight: bold; }
-        .igual { color: #95a5a6; }
-
-        /* COMODÍN ★ */
-        .comodin-cell { border: 2px solid #f1c40f !important; position: relative; background-color: #fff9db !important; }
-        .comodin-cell::after { content: '★'; position: absolute; top: -6px; right: -6px; color: #f1c40f; background: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 11px; line-height: 14px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-
-        .puntos-total-banner { background-color: #eaf2f8; border: 1px solid #bdc3c7; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; color: #2c3e50; }
-        
-        .saldos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; transition: all 0.3s ease; }
-        .saldo-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .saldo-card h3 { margin-top: 0; color: #2c3e50; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
-        .saldo-card .valor { font-size: 1.8em; font-weight: 700; margin: 10px 0; display: block; }
-        .saldo-card .valor.pagado { color: #2ecc71; }
-        .saldo-card .valor.debe { color: #e74c3c; }
-
-        #loader { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; text-align: center; font-weight: bold; color: #3498db; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 600px) {
-            .container { margin: 0; padding: 0; }
-            .col-nombre { width: 75px; min-width: 75px; max-width: 75px; }
-            header h1 { font-size: 1em; }
-        }
+        /* --- Modales --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; }
+
+        .partido-resultado-item { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; padding: 10px; border: 1px solid #eee; margin-bottom: 10px; background: #fff; border-radius: 6px; align-items: center; }
+        .partido-resultado-item input { width: 60px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
     </style>
 </head>
-
 <body>
-    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo" id="btn-regresar">↩ Regresar</a>
-    
-    <div class="container">
+    <div class="admin-panel">
+        <header>
+            <h1>Panel de Administrador</h1>
+            <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+        </header>
+
         <div id="login-screen">
-            <h2>Resultados, Tablas y Saldos</h2>
-            <input type="password" id="login-codigo" placeholder="Ingresa tu código de acceso">
-            <button id="btn-login" class="btn-primary">Entrar</button>
+             <div class="form-section" style="max-width: 400px; margin: 30px auto;">
+                 <h2>Iniciar Sesión</h2>
+                 <div class="form-group">
+                     <label>Contraseña:</label>
+                     <input type="password" id="admin-password" placeholder="Tu contraseña secreta">
+                 </div>
+                 <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
+             </div>
         </div>
 
-        <div id="main-content">
-            <header>
-                <h1 id="welcome-message">¡Hola!</h1>
-                <button id="btn-logout">Salir</button>
-            </header>
-            
+        <div id="main-content" style="display: none;">
             <nav class="tab-nav">
-                <button class="tab-button active" data-tab="tab-mis-resultados">Mis Resultados</button>
-                <button class="tab-button" data-tab="tab-resultados-publicos">Resultados Globales</button>
-                <button class="tab-button" id="btn-tab-general" data-tab="tab-tabla-general">Tabla General</button>
-                <button class="tab-button" data-tab="tab-saldos">Mis Saldos</button>
+                <button class="tab-button active" data-tab="tab-control-semanal">Control Semanal 📱</button>
+                <button class="tab-button" data-tab="tab-jugadores">Jugadores</button>
+                <button class="tab-button" data-tab="tab-codigos">Códigos & Plantillas</button>
+                <button class="tab-button" data-tab="tab-config">Configuración</button>
+                <button class="tab-button" data-tab="tab-resultados">Resultados</button>
+                <button class="tab-button" data-tab="tab-calificar-temp">Calificar Temp.</button>
+                <button class="tab-button" data-tab="tab-calificar-sem">Calif. Semanal</button>
             </nav>
 
-            <div id="tab-mis-resultados" class="tab-content active">
-                <h2>Mis Aciertos por Jornada</h2>
-                <div class="form-group" style="max-width: 300px; margin-bottom: 10px;">
-                    <label>Selecciona Jornada:</label>
-                    <select id="jornada-select-mis-resultados">
-                        <option value="" disabled selected>Seleccionar jornada...</option>
-                        <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
-                    </select>
-                </div>
-
-                <div id="wrapper-selector-nombre" style="display:none; max-width: 300px; margin-bottom: 20px;">
-                    <label>Se encontraron varias quinielas:</label>
-                    <select id="nombre-quiniela-select"></select>
-                </div>
-
-                <div id="wrapper-mis-resultados" style="display:none;">
-                    <div class="puntos-total-banner">
-                        <h3 id="mis-puntos-total-display">Total Puntos: 0</h3>
-                        <div id="mis-goles-display"></div>
+            <div id="tab-control-semanal" class="tab-content active">
+                <div class="form-section" style="border-left: 5px solid #3498db;">
+                    <h3>➕ Alta de Participante Semanal</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>Nombre:</label><input type="text" id="new-sem-nombre" placeholder="Ej: Eduardo"></div>
+                        <div class="form-group"><label>Quinielas:</label><input type="number" id="new-sem-creditos" value="1" min="1"></div>
+                        <div class="form-group" style="grid-column: span 2;"><label>WhatsApp / Teléfono (10 dígitos):</label><input type="tel" id="new-sem-telefono" placeholder="Ej: 8131071919"></div>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Partido</th><th>Mi Pronóstico</th><th>Real</th><th>Pts</th></tr></thead>
-                            <tbody id="mis-resultados-tbody"></tbody>
-                        </table>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-secondary" onclick="registrarNuevoSem('Pagado')" style="flex:1;">✅ Pagó</button>
+                        <button class="btn-warning" onclick="registrarNuevoSem('Fiado')" style="flex:1;">🚩 Fiar</button>
                     </div>
                 </div>
-            </div>
 
-            <div id="tab-resultados-publicos" class="tab-content">
-                <h2>Resultados de Todos (Global)</h2>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <select id="jornada-select-publica">
-                        <option value="" disabled selected>Seleccionar jornada...</option>
-                        <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
-                    </select>
+                <div class="form-section" style="background: #e1f5fe; border: 1px solid #b3e5fc;">
+                    <h3 style="color: #0277bd;">🚀 Inicio de Jornada</h3>
+                    <p style="font-size: 0.85em; color: #555;">Da 1 crédito (fiado) a todos los que tengan 0 créditos.</p>
+                    <button class="btn-primary" onclick="fiarMasivo()" style="background-color: #0277bd; width: 100%;">⚡ Activar a todos los que están en 0</button>
                 </div>
-                <div id="wrapper-resultados-publicos" style="display:none;">
-                    <p style="font-size: 0.8em; color: #666;">★ = Comodín</p>
-                    <div class="table-container">
-                        <table id="resultados-publicos-tabla"><thead id="resultados-publicos-thead"></thead><tbody id="resultados-publicos-tbody"></tbody></table>
+
+                <div class="form-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="margin: 0;">🔍 Buscador de Cuentas</h3>
+                        <button class="btn-primary" onclick="cargarControlSemanal()" style="width: auto; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; background-color: #34495e;">🔄 Actualizar Lista</button>
+                    </div>
+                    <input type="text" id="filtro-semanal" placeholder="Escribe nombre o código..." onkeyup="filtrarSemanalLocal()">
+                    <div id="lista-semanal-dinamica" style="margin-top:15px;">
+                        <p style="text-align:center; padding:20px; color:#888;">Cargando participantes...</p>
                     </div>
                 </div>
             </div>
 
-            <div id="tab-tabla-general" class="tab-content">
-                <div class="table-container">
-                    <table id="tabla-general-tabla">
-                        <thead><tr id="tabla-general-header-row"></tr></thead>
-                        <tbody id="tabla-general-tbody"></tbody>
+            <div id="tab-jugadores" class="tab-content">
+                <div class="form-section">
+                    <h2>Registrar Jugador Temporada</h2>
+                    <form id="form-registrar-jugador">
+                        <div class="form-group"><label>Nombre:</label><input type="text" id="reg-nombre" required></div>
+                        <div class="form-group"><label>Código:</label><input type="text" id="reg-codigo-temporada" placeholder="GUAYO" required></div>
+                        <div class="form-group"><label>Tel / WhatsApp:</label><input type="tel" id="reg-telefono" placeholder="Ej: 8131071919"></div>
+                        <div class="form-group"><label>Pago Inicial ($):</label><input type="number" id="reg-pago" value="0"></div>
+                        <button type="submit" class="btn-primary" style="width:100%;">Registrar Jugador</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h2>Visor Temporada</h2>
+                    <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
+                    <div id="visor-jugadores-container" style="display:none;">
+                        <input type="text" id="filtro-jugadores" placeholder="Buscar..." onkeyup="filtrarJugadoresLocal()">
+                        <div id="lista-jugadores"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-codigos" class="tab-content">
+                <div class="form-section">
+                    <h2>📢 Plantillas</h2>
+                    <button id="btn-cargar-plantillas" class="btn-warning" style="width:100%; margin-bottom:15px;">🔄 Cargar desde Excel</button>
+                    <textarea id="msg-temporada" style="height:80px; margin-bottom:5px;" readonly></textarea>
+                    <button onclick="copiarTexto('msg-temporada', this)" class="btn-primary" style="width:100%; margin-bottom:15px;">📋 Copiar Temporada</button>
+                    <textarea id="msg-semanal" style="height:80px; margin-bottom:5px;" readonly></textarea>
+                    <button onclick="copiarTexto('msg-semanal', this)" class="btn-secondary" style="width:100%;">📋 Copiar Semanal</button>
+                </div>
+                <div class="form-section">
+                    <h2>Asignar Código Suelto</h2>
+                    <form id="form-asignar-codigo-semanal">
+                        <input type="number" id="asig-num-quinielas" value="1">
+                        <button type="submit" class="btn-primary" style="margin-top:10px; width:100%;">Asignar Código</button>
+                    </form>
+                    <div id="resultado-asignacion" style="display:none; text-align:center; margin-top:10px;">
+                        <h3 id="codigo-asignado-texto" style="font-size:2em; color:red;"></h3>
+                        <button id="btn-copiar-codigo-semanal" class="btn-secondary">Copiar Código</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-config" class="tab-content">
+                <div class="form-section">
+                    <h2>Fecha Límite</h2>
+                    <form id="form-fecha-limite">
+                        <input type="datetime-local" id="fecha-limite-input" required>
+                        <button type="submit" class="btn-primary" style="margin-top:10px; width:100%;">Guardar Fecha</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h2>Jornada Activa</h2>
+                    <form id="form-jornada-activa">
+                        <select id="jornada-activa-select">
+                            <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
+                        </select>
+                        <button type="submit" class="btn-primary" style="margin-top:10px; width:100%;">Guardar Jornada</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="tab-resultados" class="tab-content">
+                <div class="form-section">
+                    <h2>Resultados Oficiales</h2>
+                    <select id="jornada-resultados-select">
+                        <option value="">Selecciona Jornada...</option>
+                        <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
+                    </select>
+                    <div id="partidos-resultados-container" style="margin-top:20px;"></div>
+                </div>
+            </div>
+
+            <div id="tab-calificar-temp" class="tab-content">
+                <div class="form-section">
+                    <button id="btn-iniciar-tabla" class="btn-warning" style="width:100%; margin-bottom:20px;">Reiniciar Tabla General</button>
+                    <form id="form-calificar-jornada">
+                        <select id="jornada-calificar-select">
+                            <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
+                        </select>
+                        <button type="submit" class="btn-secondary" style="width:100%; margin-top:10px;">Calificar Jornada</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="tab-calificar-sem" class="tab-content">
+                <div class="form-section">
+                    <form id="form-cargar-participantes-semanal">
+                        <select id="jornada-semanal-select">
+                            <script>for(let i=1; i<=17; i++) document.write(`<option value="${i}">Jornada ${i}</option>`);</script>
+                        </select>
+                        <button type="submit" class="btn-primary" style="width:100%; margin-top:10px;">1. Cargar Participantes</button>
+                    </form>
+                </div>
+
+                <!-- Balance de Caja con Buscador y Acciones de Cobro -->
+                <div class="form-section" style="background: #fff8e1; border: 1px solid #ffe082;">
+                    <h3 style="color: #b78103;">📊 Balance Financiero Semanal (Cierre de Caja)</h3>
+                    <p style="font-size: 0.85em; color: #666;">Calcula montos basados únicamente en dinero real liquidado en PAGOS_DETALLE.</p>
+                    <button type="button" onclick="obtenerCierreCajaSemanal()" class="btn-warning" style="width:100%; font-weight: bold;">Generar Balance de Caja</button>
+                    
+                    <div id="seccion-cierre-semanal" style="display:none; margin-top: 15px;">
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>Total Quinielas Jugadas: <b id="cierre-total-q">0</b></div>
+                            <div>Monto Total Esperado: <b id="cierre-monto-esp">$0.00</b></div>
+                            <div style="color: #27ae60;">Dinero Ya Cobrado: <b id="cierre-monto-cob">$0.00</b></div>
+                            <div style="color: #e74c3c;">Deuda de la Jornada: <b id="cierre-monto-debe">$0.00</b></div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 0.85em; font-weight: 500;">🔍 Filtrar Balanza:</label>
+                            <input type="text" id="filtro-cierre-semanal" placeholder="Escribe nombre, código o estatus..." onkeyup="filtrarCierreSemanalLocal()" style="margin-top: 4px;">
+                        </div>
+
+                        <h4>📋 Lista de Participantes en la Jornada</h4>
+                        <div id="cierre-tabla-contenedor" style="background:#fff; border-radius:6px; border:1px solid #eee; overflow-x:auto;"></div>
+                    </div>
+                </div>
+
+                <form id="form-calcular-semanal">
+                    <div class="form-section" id="seccion-lista-participantes" style="display:none;">
+                        <h2>2. Confirmar Pagos</h2>
+                        <div id="participantes-semanal-lista" style="max-height:200px; overflow-y:auto; border:1px solid #eee; padding:10px; margin-bottom:10px;"></div>
+                        <button type="submit" class="btn-secondary" style="width:100%;">Calcular Ganador</button>
+                    </div>
+                </form>
+                <div id="seccion-resultados-semanal" style="display:none;" class="form-section">
+                    <h2>Resultados</h2>
+                    <table id="resultados-semanal-tabla">
+                        <thead><tr><th>#</th><th>Nombre</th><th>Pts</th><th>M</th><th>R</th></tr></thead>
+                        <tbody id="resultados-semanal-tbody"></tbody>
                     </table>
                 </div>
             </div>
-
-            <div id="tab-saldos" class="tab-content">
-                <div class="saldos-container">
-                    <div class="saldo-card" id="saldo-temporada-card">
-                        <h3>Temporada</h3>
-                        <p id="saldo-temporada-pagado" class="valor pagado">$0.00</p>
-                        <p id="saldo-temporada-debe" class="valor debe">$0.00</p>
-                    </div>
-                    <div class="saldo-card" id="saldo-semanal-card">
-                        <h3>Semanal</h3>
-                        <p id="saldo-semanal-disponible" class="valor" style="color:#3498db;">0</p>
-                        <p id="saldo-semanal-estatus" class="valor" style="font-size:1.2em;"></p>
-                        <p id="saldo-semanal-wallet" class="valor" style="font-size:1.4em; color: #2ecc71;"></p>
-                        <p style="font-size: 0.8em; color: #666;">Saldo en Monedero</p>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div id="loader"><div class="spinner"></div>Cargando datos...</div>
+        <div id="admin-loader"><div class="spinner"></div><div id="loader-text">Procesando...</div></div>
     </div>
 
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWENw0FxnI0WNkkX34k2AfRSOhNiBmxYodgR4fRQe5sF_4vOeCQsH_LPrv9epSiNTurQ/exec";
-    let quinielasRecibidas = []; // Guardará múltiples resultados (Juan, Pedro, etc)
-    let realTotalGolesGlobal = "-"; // Para re-uso al cambiar de nombre
+    <!-- Modal Gestión Semanal -->
+    <div class="modal-overlay" id="modal-gestion-semanal">
+        <div class="modal-box">
+            <h3 id="gs-nombre" style="margin-bottom:5px;">Nombre</h3>
+            <small id="gs-codigo" style="color:#3498db; font-weight:bold;"></small>
+            <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin:15px 0; border:1px solid #eee;">
+                <p>Quinielas disponibles: <b id="gs-creditos">0</b></p>
+                <p id="gs-deuda-cont" style="color:#e74c3c; font-weight:bold;"></p>
+                <p>Wallet (Sobra): <b id="gs-wallet" style="color:#27ae60;">$0.00</b></p>
+            </div>
 
-    document.getElementById('btn-login').onclick = async () => {
-        const codigo = document.getElementById('login-codigo').value.trim();
-        if (!codigo) return alert("Ingresa tu código");
-        mostrarLoader(true);
-        const fd = new FormData(); fd.append('accion', 'loginParticipante'); fd.append('codigo', codigo);
-        try {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
-            const data = await res.json();
-            if(data.status !== 'ok') throw new Error(data.message);
-            sessionStorage.setItem('nombreUsuario', data.nombre);
-            sessionStorage.setItem('codigoTemp', data.codigoTemp || ""); 
-            sessionStorage.setItem('codigoSem', data.codigoSem || "");
-            const esSoloSemanal = (!data.codigoTemp || data.codigoTemp === "");
-            mostrarPanel(data.nombre, esSoloSemanal);
-        } catch (err) { alert(err.message); }
-        finally { mostrarLoader(false); }
-    };
+            <!-- SECCIÓN EDITAR PERFIL -->
+            <div style="background:#e8f4fd; padding:15px; border-radius:10px; margin:15px 0; border:1px solid #b3e5fc;">
+                <label style="font-size:0.8em; font-weight:bold; color:#0277bd;">✏️ EDITAR NOMBRE O CÓDIGO:</label>
+                <div class="form-group" style="margin-top:8px; margin-bottom:10px;">
+                    <label style="font-size:0.8em; margin-bottom:2px;">Nombre de Usuario:</label>
+                    <input type="text" id="gs-edit-nombre" placeholder="Ej: Daniel">
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="font-size:0.8em; margin-bottom:2px;">Código de Acceso:</label>
+                    <input type="text" id="gs-edit-codigo" placeholder="Ej: 250592">
+                </div>
+                <button class="btn-primary" onclick="guardarEdicionPerfil()" style="width:100%; background-color:#3498db; padding:8px; font-size:14px;">Actualizar Perfil</button>
+            </div>
 
-    function mostrarPanel(nombre, esSoloSemanal) {
-        document.getElementById('btn-regresar').style.display = 'none';
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-        document.getElementById('welcome-message').textContent = `¡Hola, ${nombre}!`;
-        const tabGeneral = document.getElementById('btn-tab-general');
-        const cardTemporada = document.getElementById('saldo-temporada-card');
-        const cardSemanal = document.getElementById('saldo-semanal-card');
-        const contenedorSaldos = document.querySelector('.saldos-container');
+            <!-- 🔥 SECCIÓN COBRAR CON SELECTOR DE MÉTODO DE PAGO -->
+            <label style="font-size:0.8em; font-weight:bold;">💰 COBRAR DINERO:</label>
+            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                <input type="number" id="gs-monto-pago" placeholder="$" style="flex:1;">
+                <select id="gs-metodo-pago" style="flex:1.5; padding:12px; border:1px solid #ccc; border-radius:6px;">
+                    <option value="Transferencia">Transferencia</option>
+                    <option value="Efectivo">Efectivo</option>
+                </select>
+                <button class="btn-secondary" onclick="ejecutarAccionSemanal('pago')">Cobrar</button>
+            </div>
 
-        if (esSoloSemanal) {
-            tabGeneral.style.display = 'none';
-            cardTemporada.style.display = 'none';
-            cardSemanal.style.display = 'block';
-        } else {
-            tabGeneral.style.display = 'block';
-            cardTemporada.style.display = 'block';
-            cardSemanal.style.display = 'none';
-        }
-        if (contenedorSaldos) {
-            contenedorSaldos.style.gridTemplateColumns = '1fr';
-            contenedorSaldos.style.maxWidth = '400px';
-            contenedorSaldos.style.margin = '0 auto';
-        }
-    }
+            <label style="font-size:0.8em; font-weight:bold;">🚩 FIAR CRÉDITOS:</label>
+            <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="number" id="gs-cant-fiar" placeholder="Cant."><button class="btn-warning" onclick="ejecutarAccionSemanal('fiar')">Fiar</button></div>
+            <div style="background:#fff5f5; padding:10px; border-radius:8px; border:1px dashed #feb2b2;">
+                <label style="font-size:0.8em; font-weight:bold; color:#c53030;">⚠️ QUITAR (ERROR):</label>
+                <div style="display:flex; gap:5px;"><input type="number" id="gs-cant-quitar" placeholder="Cant."><button class="btn-danger" onclick="ejecutarAccionSemanal('corregir')" style="background:#c53030;">Quitar</button></div>
+            </div>
+            <button class="btn-primary" onclick="cerrarGestionSemanal()" style="margin-top:20px; background:#7f8c8d; width:100%;">Cerrar Ventana</button>
+        </div>
+    </div>
 
-    document.getElementById('btn-logout').onclick = () => { sessionStorage.clear(); location.reload(); };
+    <!-- Modal Gestión Temporada -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-nombre" style="text-align:center;"></h3>
+            <p>Código: <span id="modal-codigo"></span></p>
+            <p>Tel: <span id="modal-telefono"></span></p>
+            <p>Pagado Total: <span id="modal-pagado" style="color:green; font-weight:bold;"></span></p>
+            <p>Resta por pagar: <span id="modal-debe" style="color:red; font-weight:bold;"></span></p>
+            <hr>
+            <div class="form-group"><label>Abonar Monto:</label><input type="number" id="modal-pago-monto"></div>
+            <label>Método:</label>
+            <select id="modal-pago-metodo"><option value="Transferencia">Transferencia</option><option value="Efectivo">Efectivo</option></select>
+            
+            <button id="btn-modal-registrar-pago" class="btn-secondary" style="width:100%; margin-top:10px;">Registrar Abono</button>
 
-    document.querySelectorAll('.tab-button').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(tab.dataset.tab).classList.add('active');
-            if(tab.dataset.tab === 'tab-tabla-general') cargarTablaGeneral();
-            if(tab.dataset.tab === 'tab-saldos') cargarMisSaldos();
+            <div style="border-top: 1px solid #ddd; margin-top: 15px; padding-top: 10px; text-align: center;">
+                <p style="font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #555;">ESTATUS DE ACCESO:</p>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="cambiarEstatusManual('BLOQUEADO')" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:5px; flex:1; cursor:pointer; font-weight:bold; font-size:11px;">🛑 Bloquear</button>
+                    <button onclick="cambiarEstatusManual('PERMITIDO')" style="background:#2ecc71; color:white; border:none; padding:8px; border-radius:5px; flex:1; cursor:pointer; font-weight:bold; font-size:11px;">✅ Permitir</button>
+                    <button onclick="cambiarEstatusManual('')" style="background:#95a5a6; color:white; border:none; padding:8px; border-radius:5px; flex:1; cursor:pointer; font-weight:bold; font-size:11px;">🔄 Auto</button>
+                </div>
+            </div>
+            <button onclick="document.getElementById('modal-overlay').style.display='none'" class="btn-primary" style="width:100%; margin-top:10px; background:#7f8c8d;">Cerrar Ventana</button>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWENw0FxnI0WNkkX34k2AfRSOhNiBmxYodgR4fRQe5sF_4vOeCQsH_LPrv9epSiNTurQ/exec"; 
+        let adminPassword = "";
+        let listaJugadoresCache = [];
+        let jugadorSeleccionadoActual = null;
+        let selSem = null;
+
+        // --- MANEJO DE PESTAÑAS ---
+        document.querySelectorAll('.tab-button').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.tab;
+                document.getElementById(target).classList.add('active');
+                if(target === 'tab-control-semanal') cargarControlSemanal();
+            });
         });
-    });
 
-    // MIS RESULTADOS: LOGICA MULTI-QUINIELA
-    document.getElementById('jornada-select-mis-resultados').onchange = async (e) => {
-        const j = e.target.value; if(!j) return;
-        mostrarLoader(true);
-        const fd = new FormData(); fd.append('accion', 'getMisResultados'); fd.append('jornada', j);
-        fd.append('codigoTemp', sessionStorage.getItem('codigoTemp')); fd.append('codigoSem', sessionStorage.getItem('codigoSem'));
-        
-        try {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
-            const data = await res.json();
-            
-            if(data.status !== 'ok') {
-                alert(data.message);
-                document.getElementById('wrapper-mis-resultados').style.display = 'none';
-                document.getElementById('wrapper-selector-nombre').style.display = 'none';
-                return;
+        // --- LOGIN ---
+        document.getElementById('btn-login').onclick = async () => {
+            adminPassword = document.getElementById('admin-password').value.trim();
+            if(!adminPassword) return alert("Escribe la contraseña");
+            mostrarLoader(true, "Accediendo...");
+            try {
+                const fd = new FormData(); fd.append('accion', 'ping'); fd.append('adminPassword', adminPassword);
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    cargarControlSemanal();
+                } else { alert("Contraseña incorrecta"); }
+            } catch(e) { alert("Error de conexión: " + e.message); }
+            mostrarLoader(false);
+        };
+
+        // --- COMUNICACIÓN SERVIDOR ---
+        async function llamarAppsScript(formData) {
+            mostrarLoader(true);
+            formData.append('adminPassword', adminPassword);
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+            const data = await response.json();
+            mostrarLoader(false);
+            if (data.status === 'ok') return data; else throw new Error(data.message);
+        }
+
+        function mostrarLoader(show, text) { 
+            document.getElementById('admin-loader').style.display = show ? 'flex' : 'none'; 
+            document.getElementById('loader-text').innerText = text || "Procesando...";
+        }
+
+        // --- CONTROL SEMANAL ---
+        async function cargarControlSemanal() {
+            try {
+                const fd = new FormData(); fd.append('accion', 'getJugadoresSemanal');
+                const res = await llamarAppsScript(fd);
+                dibujarListaSemanal(res.jugadores);
+            } catch (e) { 
+                alert("Error al cargar control semanal: " + e.message);
             }
+        }
 
-            quinielasRecibidas = data.quinielas; // Array de resultados
-            realTotalGolesGlobal = data.realTotalGoles;
-            
-            const wrapperNombre = document.getElementById('wrapper-selector-nombre');
-            const selectNombre = document.getElementById('nombre-quiniela-select');
-
-            if (quinielasRecibidas.length > 1) {
-                wrapperNombre.style.display = 'block';
-                document.getElementById('wrapper-mis-resultados').style.display = 'none';
-                selectNombre.innerHTML = '<option value="" disabled selected>¿De quién es la quiniela?</option>';
-                quinielasRecibidas.forEach((q, idx) => {
-                    selectNombre.innerHTML += `<option value="${idx}">${q.nombreParticipante}</option>`;
+        function dibujarListaSemanal(jugadores) {
+            const cont = document.getElementById('lista-semanal-dinamica');
+            let html = '';
+            if (jugadores && jugadores.forEach) {
+                jugadores.forEach(j => {
+                    let esDeuda = j.estatus && j.estatus.includes("PENDIENTE");
+                    let estilo = esDeuda ? "color:#e74c3c; font-weight:bold;" : "color:#27ae60; font-weight:bold;";
+                    let jData = JSON.stringify(j).replace(/'/g, "&apos;");
+                    html += `<div class="list-item" onclick='abrirGestionSemanal(${jData})'>
+                        <div><strong>${j.nombre}</strong><br><small>Cod: ${j.codigo}</small></div>
+                        <div style="text-align:right;">Quinielas: <b>${j.creditos}</b><br><small style="${estilo}">${j.estatus}</small></div>
+                    </div>`;
                 });
-            } else {
-                wrapperNombre.style.display = 'none';
-                dibujarUnaQuiniela(0);
             }
-        } catch (e) { } finally { mostrarLoader(false); }
-    };
+            cont.innerHTML = html || '<p style="text-align:center; padding:20px;">Sin participantes registrados.</p>';
+        }
 
-    // Evento al elegir nombre en el selector secundario
-    document.getElementById('nombre-quiniela-select').onchange = (e) => {
-        dibujarUnaQuiniela(e.target.value);
-    };
-
-    function dibujarUnaQuiniela(idx) {
-        const data = quinielasRecibidas[idx];
-        document.getElementById('wrapper-mis-resultados').style.display = 'block';
-        document.getElementById('mis-puntos-total-display').textContent = `Total Puntos: ${data.totalPuntos}`;
-        document.getElementById('mis-goles-display').textContent = `Goles: ${data.miTotalGoles} (Tú) vs ${realTotalGolesGlobal} (Real)`;
-        
-        let tbody = document.getElementById('mis-resultados-tbody'); 
-        tbody.innerHTML = '';
-        data.comparativa.forEach((item) => {
-            let bg = item.puntos >= 3 ? '#d4edda' : (item.puntos > 0 ? '#fff3cd' : '#fff');
-            tbody.innerHTML += `<tr><td>${item.partido}</td><td>${item.pronostico}</td><td style="font-weight:bold;">${item.real}</td><td class="${item.esComodin?'comodin-cell':''}" style="background:${bg}">${item.puntos}</td></tr>`;
-        });
-    }
-
-    // RESULTADOS GLOBALES (CON COMODÍN Y FILTRO)
-    document.getElementById('jornada-select-publica').onchange = async (e) => {
-        const j = e.target.value; if(!j) return;
-        document.getElementById('wrapper-resultados-publicos').style.display = 'block';
-        mostrarLoader(true);
-        const tieneTemporada = sessionStorage.getItem('codigoTemp') !== "";
-        const tieneSemanal = sessionStorage.getItem('codigoSem') !== "";
-        const fd = new FormData(); fd.append('accion', 'getResultadosPublicos'); fd.append('jornada', j);
-        try {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
-            const data = await res.json();
+        async function registrarNuevoSem(metodo) {
+            const nombre = document.getElementById('new-sem-nombre').value.trim();
+            const creditos = document.getElementById('new-sem-creditos').value;
+            const telefono = document.getElementById('new-sem-telefono').value.trim(); 
+            if (!nombre || creditos < 1) return alert("Faltan datos");
             
-            // Encabezados con estilo unificado Azul
-            let h1 = '<tr><th class="col-num">#</th><th class="col-nombre">Participante</th>';
-            data.partidos.forEach((p, i) => h1 += `<th colspan="3">P${i+1}: ${p.local} vs ${p.visita}</th>`);
-            h1 += '<th>Goles</th><th>Pts</th></tr>';
+            const fd = new FormData(); 
+            fd.append('accion', 'AsignarNuevoParticipante'); 
+            fd.append('nombre', nombre); 
+            fd.append('creditos', creditos); 
+            fd.append('telefono', telefono);
+            fd.append('metodo', metodo);
             
-            let h2 = '<tr><th class="col-num"></th><th class="col-nombre">RESULTADOS REALES</th>';
-            data.resultadosReales.forEach((r, i) => { if(i%2===0) { const v = (r!==""||data.resultadosReales[i+1]!=="") ? r+' - '+data.resultadosReales[i+1] : '-'; h2 += `<td colspan="3">${v}</td>`; } });
-            h2 += `<td>${data.realTotalGoles}</td><td>-</td></tr>`;
-            document.getElementById('resultados-publicos-thead').innerHTML = h1 + h2;
-            
-            let b = '';
-            let cont = 1;
-            data.tabla.forEach((jug) => {
-                const tipo = (jug.tipoJugador || "").toLowerCase().trim();
-                let mostrar = false;
-                if (tieneTemporada && (tipo === "temporada" || tipo === "ambos")) mostrar = true;
-                else if (tieneSemanal && (tipo === "semanal" || tipo === "ambos")) mostrar = true;
-                if (mostrar) {
-                    let row = `<tr><td class="col-num">${cont}</td><td class="col-nombre" title="${jug.nombre}">${jug.nombre}</td>`;
-                    let comodinIdx = (jug.comodinIdx) ? (parseInt(jug.comodinIdx) - 1) : -1;
-                    for(let p=0; p<9; p++){
-                        let pts = jug.puntos[p];
-                        let bg = pts >= 3 ? '#d4edda' : (pts >= 1 ? '#fff3cd' : '#fff');
-                        row += `<td>${jug.pronosticos[p*2]}</td><td>${jug.pronosticos[p*2+1]}</td><td class="${p===comodinIdx?'comodin-cell':''}" style="background:${bg}">${pts}</td>`;
-                    }
-                    b += row + `<td>${jug.totalGoles}</td><td style="font-weight:bold; background:#3498db; color:white;">${jug.totalPuntos}</td></tr>`;
-                    cont++;
+            try { 
+                const res = await llamarAppsScript(fd); 
+                let mensajeFinal = res.message || "¡Participante registrado con éxito!";
+                
+                let codigoGenerado = res.codigo;
+                if (!codigoGenerado && res.message) {
+                    const partes = res.message.split(':');
+                    if (partes.length > 1) codigoGenerado = partes[partes.length - 1].trim();
                 }
-            });
-            document.getElementById('resultados-publicos-tbody').innerHTML = b;
-        } catch (e) { } finally { mostrarLoader(false); }
-    };
-
-    // TABLA GENERAL (TENDENCIA ▲ ▼)
-    async function cargarTablaGeneral() {
-        mostrarLoader(true);
-        const fd = new FormData(); fd.append('accion', 'getTablaGeneral');
-        try {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
-            const data = await res.json();
-            let head = '<th class="col-num">#</th><th></th><th class="col-nombre">Nombre</th>';
-            for(let i=1; i<=17; i++) head += `<th>J${i}</th>`;
-            head += '<th>Total</th><th>E</th><th>R</th>';
-            document.getElementById('tabla-general-header-row').innerHTML = head;
-            let b = '';
-            data.tabla.forEach((fila, i) => {
-                const ten = fila[21];
-                const icono = ten===1?'▲':(ten===-1?'▼':'●');
-                const clase = ten===1?'subio':(ten===-1?'bajo':'igual');
-                let rowHtml = `<tr><td class="col-num">${i+1}</td><td class="${clase}">${icono}</td><td class="col-nombre" title="${fila[0]}">${fila[0]}</td>`;
-                for(let j=1; j<=20; j++) rowHtml += `<td>${fila[j]}</td>`;
-                b += rowHtml + '</tr>';
-            });
-            document.getElementById('tabla-general-tbody').innerHTML = b;
-        } catch (e) { } finally { mostrarLoader(false); }
-    }
-
-    async function cargarMisSaldos() {
-        mostrarLoader(true);
-        const fd = new FormData(); fd.append('accion', 'getMisSaldos');
-        fd.append('codigoTemp', sessionStorage.getItem('codigoTemp')); fd.append('codigoSem', sessionStorage.getItem('codigoSem'));
-        try {
-            const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
-            const data = await res.json();
-            const f = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
-            if (data.saldos.temporada) {
-                document.getElementById('saldo-temporada-pagado').textContent = "Pagado: " + f.format(data.saldos.temporada.pagado);
-                document.getElementById('saldo-temporada-debe').textContent = "Debe: " + f.format(data.saldos.temporada.debe);
+                
+                if (codigoGenerado) {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        try {
+                            await navigator.clipboard.writeText(codigoGenerado);
+                            mensajeFinal += `\n\n📋 ¡El código [${codigoGenerado}] se ha copiado automáticamente!`;
+                            alert(mensajeFinal);
+                        } catch (errCopy) {
+                            prompt("¡Registrado! Copia el código generado:", codigoGenerado);
+                        }
+                    } else {
+                        prompt("¡Registrado con éxito!\n\nCopia el código generado:", codigoGenerado);
+                    }
+                } else {
+                    alert(mensajeFinal);
+                }
+                
+                document.getElementById('new-sem-nombre').value = ''; 
+                document.getElementById('new-sem-telefono').value = ''; 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al registrar participante: " + e.message);
             }
-            if (data.saldos.semanal) {
-                document.getElementById('saldo-semanal-disponible').textContent = "Créditos: " + (data.saldos.semanal.saldo || 0);
-                document.getElementById('saldo-semanal-estatus').textContent = "Estatus: " + (data.saldos.semanal.estatus || "SIN DATOS");
-                document.getElementById('saldo-semanal-wallet').textContent = f.format(parseFloat(data.saldos.semanal.wallet) || 0);
-            }
-        } catch (e) { } finally { mostrarLoader(false); }
-    }
+        }
 
-    function mostrarLoader(s) { document.getElementById('loader').style.display = s ? 'block' : 'none'; }
-</script>
+        async function fiarMasivo() {
+            if(!confirm("¿Fiar 1 crédito a todos los que están en 0?")) return;
+            try { 
+                const fd = new FormData(); 
+                fd.append('accion', 'FiarMasivoCeroCreditos'); 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message); 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error en fiar masivo: " + e.message);
+            }
+        }
+
+        function abrirGestionSemanal(j) {
+            selSem = j;
+            document.getElementById('gs-nombre').innerText = j.nombre;
+            document.getElementById('gs-codigo').innerText = "COD: " + j.codigo;
+            document.getElementById('gs-creditos').innerText = j.creditos;
+            document.getElementById('gs-wallet').innerText = "$" + (parseFloat(j.wallet || 0).toFixed(2));
+            
+            document.getElementById('gs-edit-nombre').value = j.nombre;
+            document.getElementById('gs-edit-codigo').value = j.codigo;
+
+            const dCont = document.getElementById('gs-deuda-cont');
+            if(j.estatus && j.estatus.includes("PENDIENTE")) { dCont.innerText = "🚩 DEUDA: " + j.estatus.replace("PENDIENTE:", ""); dCont.style.display = "block"; } else { dCont.style.display = "none"; }
+            document.getElementById('modal-gestion-semanal').style.display = 'flex';
+        }
+
+        function cerrarGestionSemanal() { document.getElementById('modal-gestion-semanal').style.display = 'none'; selSem = null; }
+
+        // 🔥 FUNCIÓN COBRAR ACTUALIZADA: ENVÍA MÉTODO DE PAGO
+        async function ejecutarAccionSemanal(tipo) {
+            const fd = new FormData(); 
+            fd.append('codigo', selSem.codigo); 
+            fd.append('nombre', selSem.nombre);
+            
+            if (tipo === 'pago') { 
+                const m = document.getElementById('gs-monto-pago').value; 
+                if(!m) return alert("Ingresa monto"); 
+                
+                const metodo = document.getElementById('gs-metodo-pago').value;
+                const jSel = document.getElementById('jornada-semanal-select').value || "1";
+                
+                fd.append('accion', 'registrarAbonoSemanalV2'); 
+                fd.append('monto', m); 
+                fd.append('metodo', metodo);
+                fd.append('jornada', jSel);
+            } else if (tipo === 'fiar') {
+                const c = document.getElementById('gs-cant-fiar').value; if(!c) return alert("Ingresa cantidad");
+                fd.append('accion', 'FiarCreditos'); 
+                fd.append('cantidad', c);
+            } else {
+                const q = document.getElementById('gs-cant-quitar').value; if(!q) return alert("Ingresa cantidad");
+                if(!confirm("¿Quitar créditos y reducir deuda?")) return;
+                fd.append('accion', 'CorregirCreditos'); 
+                fd.append('cantidad', q);
+            }
+            
+            try { 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message); 
+                cerrarGestionSemanal(); 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al procesar acción: " + e.message);
+            }
+        }
+
+        async function guardarEdicionPerfil() {
+            const nuevoNombre = document.getElementById('gs-edit-nombre').value.trim();
+            const nuevoCodigo = document.getElementById('gs-edit-codigo').value.trim();
+            
+            if (!nuevoNombre || !nuevoCodigo) return alert("El nombre y el código no pueden estar vacíos.");
+            if (nuevoNombre === selSem.nombre && nuevoCodigo === selSem.codigo) return alert("No has realizado ningún cambio.");
+
+            const confirmacion = confirm(`¿Estás seguro de actualizar los datos?\n\nNombre: ${selSem.nombre} ➔ ${nuevoNombre}\nCódigo: ${selSem.codigo} ➔ ${nuevoCodigo}`);
+            if (!confirmacion) return;
+
+            const fd = new FormData();
+            fd.append('accion', 'EditarParticipanteSemanal');
+            fd.append('codigoOriginal', selSem.codigo); 
+            fd.append('nuevoNombre', nuevoNombre);
+            fd.append('nuevoCodigo', nuevoCodigo);
+
+            try {
+                const res = await llamarAppsScript(fd);
+                alert(res.message);
+                cerrarGestionSemanal();
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al editar perfil: " + e.message);
+            }
+        }
+
+        function filtrarSemanalLocal() {
+            const t = document.getElementById('filtro-semanal').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-semanal-dinamica .list-item');
+            items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
+        }
+
+        function filtrarJugadoresLocal() {
+            const t = document.getElementById('filtro-jugadores').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-jugadores .jugador-item');
+            items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
+        }
+
+        function filtrarCierreSemanalLocal() {
+            const t = document.getElementById('filtro-cierre-semanal').value.toLowerCase();
+            const rows = document.querySelectorAll('#cierre-tabla-contenedor tbody tr');
+            rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(t) ? '' : 'none');
+        }
+
+        // --- OTRAS FUNCIONES ---
+        document.getElementById('form-registrar-jugador').onsubmit = async (e) => {
+            e.preventDefault();
+            const fd = new FormData(); fd.append('accion', 'registrarJugador');
+            fd.append('nombre', document.getElementById('reg-nombre').value);
+            fd.append('codigo', document.getElementById('reg-codigo-temporada').value);
+            fd.append('telefono', document.getElementById('reg-telefono').value);
+            fd.append('pagoInicial', document.getElementById('reg-pago').value);
+            try { await llamarAppsScript(fd); alert("Registrado"); e.target.reset(); } catch(e){ alert("❌ Error: " + e.message); }
+        };
+
+        document.getElementById('btn-cargar-jugadores').onclick = async () => {
+            try {
+                const fd = new FormData(); fd.append('accion', 'getJugadores');
+                const res = await llamarAppsScript(fd);
+                listaJugadoresCache = res.jugadores;
+                const c = document.getElementById('lista-jugadores'); c.innerHTML = '';
+                listaJugadoresCache.forEach(j => { c.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'>${j.nombre} <span>${j.codigo}</span></div>`; });
+                document.getElementById('visor-jugadores-container').style.display = 'block';
+            } catch(e){ alert("❌ Error al cargar jugadores: " + e.message); }
+        };
+
+        window.verJugador = (j) => {
+            jugadorSeleccionadoActual = j;
+            document.getElementById('modal-nombre').innerText = j.nombre;
+            document.getElementById('modal-codigo').innerText = j.codigo;
+            document.getElementById('modal-telefono').innerText = j.telefono;
+            document.getElementById('modal-pagado').innerText = "$"+j.pagado;
+            document.getElementById('modal-debe').innerText = "$"+j.debe;
+            document.getElementById('modal-overlay').style.display = 'flex';
+        };
+
+        document.getElementById('btn-modal-registrar-pago').onclick = async () => {
+            const m = document.getElementById('modal-pago-monto').value;
+            if(!m) return alert("Por favor, ingresa el monto del abono.");
+            
+            const fd = new FormData(); 
+            fd.append('accion', 'registrarPago');
+            fd.append('codigo', jugadorSeleccionadoActual.codigo); 
+            fd.append('nombre', jugadorSeleccionadoActual.nombre); 
+            fd.append('monto', m);
+            fd.append('metodo', document.getElementById('modal-pago-metodo').value);
+            
+            try { 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message || "Abono registrado con éxito.");
+                document.getElementById('modal-overlay').style.display = 'none'; 
+                document.getElementById('btn-cargar-jugadores').click(); 
+            } catch(e){ 
+                alert("❌ Error al registrar abono: " + e.message); 
+            }
+        };
+
+        // FUNCIÓN MASTER: BALANCE FINANCIERO Y ACCIONES DE COBRO
+        async function obtenerCierreCajaSemanal() {
+            const jornada = document.getElementById('jornada-semanal-select').value;
+            if (!jornada) return alert("Por favor, selecciona primero una Jornada en el menú.");
+            
+            const fd = new FormData();
+            fd.append('accion', 'ObtenerCierreSemanal');
+            fd.append('jornada', jornada);
+
+            try {
+                const r = await llamarAppsScript(fd);
+                
+                document.getElementById('cierre-total-q').innerText = r.totalQuinielas;
+                document.getElementById('cierre-monto-esp').innerText = "$" + r.dineroEsperado.toFixed(2);
+                document.getElementById('cierre-monto-cob').innerText = "$" + r.dineroCobrado.toFixed(2);
+                document.getElementById('cierre-monto-debe').innerText = "$" + r.dineroDebido.toFixed(2);
+                
+                const cont = document.getElementById('cierre-tabla-contenedor');
+                let html = `<table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f4f4f4;">
+                            <th style="padding:10px; border:1px solid #ddd;">Participante</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Q. Enviadas (J${r.jornada})</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Monto J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Abonado J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda Global</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Acciones de Cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                r.detalles.forEach(d => {
+                    let debeEstaJornada = d.deudaJornada > 0;
+                    let estDeudaJornada = debeEstaJornada ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
+                    
+                    let esDeudorGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") || d.deudaJornada > 0;
+                    let estDeudaGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
+                    
+                    let celdaAcciones = "-";
+                    if (esDeudorGlobal && d.mensajeCobro) {
+                        let cleanPhone = d.telefono ? d.telefono.replace(/\D/g, '') : '';
+                        if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; 
+                        
+                        let txtCodificado = encodeURIComponent(d.mensajeCobro);
+                        let textoEscape = d.mensajeCobro.replace(/`/g, '\\`').replace(/\n/g, '\\n');
+                        
+                        let btnEnviar = cleanPhone 
+                            ? `<a href="https://wa.me/${cleanPhone}?text=${txtCodificado}" target="_blank" style="background:#25D366; color:white; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:4px; text-align:center;">📲 Enviar</a>`
+                            : `<button disabled style="background:#ccc; color:#777; padding:5px 10px; border-radius:4px; font-size:11px; display:inline-block; margin-bottom:4px; cursor:not-allowed;">🚫 Sin Tel</button>`;
+                        
+                        let btnCopiar = `<button onclick="copiarMensajeDesdeTabla(\`${textoEscape}\`)" style="background:#3498db; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-block; width:70px;">📋 Copiar</button>`;
+                        
+                        celdaAcciones = `<div style="text-align:center;">${btnEnviar}<br>${btnCopiar}</div>`;
+                    } else {
+                        celdaAcciones = `<span style="color:#2ecc71; font-weight:bold;">✅ Al día</span>`;
+                    }
+                    
+                    html += `<tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:10px; border:1px solid #ddd;"><strong>${d.nombre}</strong><br><small style="color:#666;">Cód: ${d.codigo}</small>${d.telefono ? `<br><small style="color:#0277bd; font-weight:bold;">📞 ${d.telefono}</small>` : ''}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">${d.jugadas}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center;">$${d.montoJornada.toFixed(2)}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center; color:#27ae60; font-weight:bold;">$${d.pagadoJornada.toFixed(2)}</td>
+                        <td style="${estDeudaJornada}">$${d.deudaJornada.toFixed(2)}</td>
+                        <td style="${estDeudaGlobal}">${d.deudaGlobal}</td>
+                        <td style="padding:8px; border:1px solid #ddd; vertical-align:middle;">${celdaAcciones}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                cont.innerHTML = html;
+                document.getElementById('seccion-cierre-semanal').style.display = 'block';
+                document.getElementById('filtro-cierre-semanal').value = ""; 
+                
+            } catch(e) {
+                alert("❌ Error al generar el balance financiero: " + e.message);
+            }
+        }
+
+        window.copiarMensajeDesdeTabla = (texto) => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert("✅ ¡Mensaje de cobro copiado!\n\nVe a WhatsApp y pégalo directamente al contacto.");
+                }).catch(() => prompt("Copia el texto de cobro desde aquí:", texto));
+            } else {
+                prompt("Copia el texto de cobro desde aquí:", texto);
+            }
+        };
+
+        document.getElementById('btn-cargar-plantillas').onclick = async () => {
+            try {
+                const fd = new FormData(); fd.append('accion', 'getPlantillas');
+                const d = await llamarAppsScript(fd);
+                document.getElementById('msg-temporada').value = d.temporada; document.getElementById('msg-semanal').value = d.semanal;
+            } catch(e){ alert("❌ Error al cargar plantillas: " + e.message); }
+        };
+
+        function copiarTexto(id, btn) { 
+            const t = document.getElementById(id); t.select(); document.execCommand('copy'); 
+            const original = btn.innerText; btn.innerText = "✅ Copiado"; setTimeout(()=>btn.innerText=original, 2000); 
+        }
+
+        document.getElementById('form-asignar-codigo-semanal').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion', 'asignarCodigoSemanal');
+            fd.append('numQuinielas', document.getElementById('asig-num-quinielas').value);
+            try {
+                const r = await llamarAppsScript(fd);
+                document.getElementById('codigo-asignado-texto').innerText = r.codigo; document.getElementById('resultado-asignacion').style.display = 'block';
+            } catch(e){ alert("❌ Error: " + e.message); }
+        };
+
+        document.getElementById('jornada-resultados-select').onchange = async (e) => {
+            const j = e.target.value; if(!j) return;
+            try {
+                const fd = new FormData(); fd.append('accion', 'cargarPartidosParaResultados'); fd.append('jornada', j);
+                const r = await llamarAppsScript(fd);
+                const c = document.getElementById('partidos-resultados-container'); c.innerHTML = '';
+                r.partidos.forEach((p, i) => {
+                    c.innerHTML += `<div class="partido-resultado-item"><label>${p.local} vs ${p.visitante}</label>
+                    <input type="number" id="p${i}_L" value="${p.res_local}"> <input type="number" id="p${i}_V" value="${p.res_visita}">
+                    <button onclick="guardarPartido(${i})" class="btn-secondary">💾</button></div>`;
+                });
+            } catch(e){ alert("❌ Error al cargar partidos: " + e.message); }
+        };
+
+        window.guardarPartido = async (i) => {
+            const fd = new FormData(); fd.append('accion', 'actualizarPartidoUnico');
+            fd.append('jornada', document.getElementById('jornada-resultados-select').value); fd.append('partidoIndex', i);
+            fd.append('local', document.getElementById(`p${i}_L`).value); fd.append('visitante', document.getElementById(`p${i}_V`).value);
+            try { await llamarAppsScript(fd); alert("Partido guardado"); } catch(e){ alert("❌ Error: " + e.message); }
+        };
+
+        document.getElementById('btn-iniciar-tabla').onclick = async () => {
+            if(!confirm("⚠️ ADVERTENCIA: Esto borrará TODOS los puntos de la Tabla General a 0.\n\n¿Estás totalmente seguro?")) return;
+            const validacion = prompt("CANDADO DE SEGURIDAD\n\nPor favor, ingresa tu contraseña de Administrador para confirmar el reinicio total:");
+            if (validacion === null) return; 
+            if (validacion === adminPassword) {
+                try { 
+                    const fd = new FormData(); 
+                    fd.append('accion', 'iniciarTablaGeneral'); 
+                    await llamarAppsScript(fd); 
+                    alert("✅ Tabla General reiniciada con éxito.");
+                } catch(e){ alert("Error al procesar: " + e.message); }
+            } else { alert("❌ Contraseña incorrecta. El reinicio ha sido cancelado por seguridad."); }
+        };
+
+        document.getElementById('form-calificar-jornada').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion', 'calificarJornada');
+            fd.append('jornada', document.getElementById('jornada-calificar-select').value); try { await llamarAppsScript(fd); alert("Calificado con éxito"); } catch(e){ alert("❌ Error: " + e.message); }
+        };
+
+        document.getElementById('form-cargar-participantes-semanal').onsubmit = async (e) => {
+            e.preventDefault(); 
+            const fd = new FormData(); fd.append('accion', 'cargarParticipantesSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
+            try {
+                const r = await llamarAppsScript(fd);
+                const l = document.getElementById('participantes-semanal-lista'); l.innerHTML = '';
+                r.participantes.forEach(p => { l.innerHTML += `<div style="padding:5px;"><label><input type="checkbox" name="jugador_${p.codigo}" value="${p.codigo}" checked> ${p.nombre} (${p.tipo})</label></div>`; });
+                document.getElementById('seccion-lista-participantes').style.display = 'block';
+            } catch(e){ alert("❌ Error al cargar participantes semanales: " + e.message); }
+        };
+
+        document.getElementById('form-calcular-semanal').onsubmit = async (e) => {
+            e.preventDefault(); 
+            const fd = new FormData(e.target); fd.append('accion', 'calcularGanadorSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
+            try {
+                const r = await llamarAppsScript(fd);
+                const b = document.getElementById('resultados-semanal-tbody'); b.innerHTML = '';
+                r.resultados.forEach((res, i) => { b.innerHTML += `<tr><td>${i+1}</td><td>${res.nombre}</td><td><b>${res.puntos}</b></td><td>${res.aciertosM}</td><td>${res.aciertosR}</td></tr>`; });
+                document.getElementById('seccion-resultados-semanal').style.display = 'block';
+            } catch(e){ alert("❌ Error al calcular ganador semanal: " + e.message); }
+        };
+        
+        document.getElementById('form-fecha-limite').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarFechaLimite'); fd.append('fechaLimite', document.getElementById('fecha-limite-input').value); try { await llamarAppsScript(fd); alert("Fecha límite guardada"); } catch(e){ alert("❌ Error: " + e.message); } };
+        document.getElementById('form-jornada-activa').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarJornadaActiva'); fd.append('jornadaActiva', document.getElementById('jornada-activa-select').value); try { await llamarAppsScript(fd); alert("Jornada activa guardada"); } catch(e){ alert("❌ Error: " + e.message); } };
+         
+        async function cambiarEstatusManual(nuevoEstatus) {
+            const codigo = document.getElementById('modal-codigo').textContent;
+            const pass = document.getElementById('admin-password').value; 
+
+            if (!pass) return alert("Por favor ingresa la contraseña de administrador.");
+            if (!codigo) return alert("Error: No se detectó el código del jugador.");
+
+            const confirmacion = confirm(`¿Cambiar estatus de ${codigo} a ${nuevoEstatus || 'AUTOMÁTICO'}?`);
+            if (!confirmacion) return;
+
+            document.getElementById('admin-loader').style.display = 'block';
+
+            const fd = new FormData();
+            fd.append('accion', 'actualizarEstatusManual');
+            fd.append('adminPassword', pass);
+            fd.append('codigo', codigo);
+            fd.append('estatus', nuevoEstatus);
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const data = await res.json();
+                alert(data.message);
+                document.getElementById('modal-overlay').style.display = 'none';
+            } catch (e) {
+                alert("Error de conexión");
+            } finally {
+                document.getElementById('admin-loader').style.display = 'none';
+            }
+        }    
+    </script>
 </body>
 </html>
