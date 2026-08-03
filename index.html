@@ -384,20 +384,29 @@
         } catch (e) { } finally { mostrarLoader(false); }
     };
 
- // TABLA GENERAL (TENDENCIA ▲ ▼) - CORREGIDA
+// TABLA GENERAL CON ALERTAS DE DIAGNÓSTICO
     async function cargarTablaGeneral() {
         mostrarLoader(true);
-        const fd = new FormData(); fd.append('accion', 'getTablaGeneral');
+        const fd = new FormData(); 
+        fd.append('accion', 'getTablaGeneral');
+        
         try {
             const res = await fetch(SCRIPT_URL, {method:'POST', body:fd});
             const data = await res.json();
+            
+            // 🔥 Si el servidor regresa error, nos dirá exactamente por qué
+            if (data.status !== 'ok') {
+                alert("❌ Error desde Google Apps Script: " + data.message);
+                return;
+            }
+
             let head = '<th class="col-num">#</th><th></th><th class="col-nombre">Nombre</th>';
             for(let i=1; i<=17; i++) head += `<th>J${i}</th>`;
             head += '<th>Total</th><th>E</th><th>R</th>';
             document.getElementById('tabla-general-header-row').innerHTML = head;
+            
             let b = '';
             data.tabla.forEach((fila, i) => {
-                // 🔥 CORRECCIÓN: Forzamos la conversión a número entero (soporta texto "1", "-1" o números 1, -1)
                 const ten = parseInt(fila[21], 10) || 0;
                 const icono = ten > 0 ? '▲' : (ten < 0 ? '▼' : '●');
                 const clase = ten > 0 ? 'subio' : (ten < 0 ? 'bajo' : 'igual');
@@ -407,7 +416,12 @@
                 b += rowHtml + '</tr>';
             });
             document.getElementById('tabla-general-tbody').innerHTML = b;
-        } catch (e) { } finally { mostrarLoader(false); }
+            
+        } catch (e) { 
+            alert("❌ Error de conexión/JS: " + e.message);
+        } finally { 
+            mostrarLoader(false); 
+        }
     }
 
     async function cargarMisSaldos() {
