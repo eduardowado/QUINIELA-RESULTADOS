@@ -38,6 +38,15 @@
             flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
             font-size: 1em; box-sizing: border-box; text-align: center; min-width: 0;
         }
+        #lista-codigos { display: none; margin: -12px 0 16px; border: 1px solid #ddd; border-radius: 6px; background: #fff; text-align: left; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        #lista-codigos .cod-titulo { font-size: 0.72em; color: #7f8c8d; padding: 6px 12px; background: #f8f9fa; border-bottom: 1px solid #eee; }
+        #lista-codigos .cod-item { display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
+        #lista-codigos .cod-item:last-child { border-bottom: none; }
+        #lista-codigos .cod-sel { flex: 1; background: none; border: none; text-align: left; padding: 10px 12px; cursor: pointer; font-size: 0.95em; color: #2c3e50; min-width: 0; }
+        #lista-codigos .cod-sel:active { background: #eaf4fc; }
+        #lista-codigos .cod-nombre { display: block; font-weight: 700; }
+        #lista-codigos .cod-sub { display: block; font-size: 0.78em; color: #7f8c8d; margin-top: 2px; }
+        #lista-codigos .cod-del { background: none; border: none; color: #e74c3c; font-size: 1.1em; font-weight: 700; padding: 10px 14px; cursor: pointer; }
         .ojo { background: #fff; color: #2c3e50; border: 1px solid #2c3e50; border-radius: 6px; padding: 0 12px; font-size: 0.8em; font-weight: 700; cursor: pointer; white-space: nowrap; }
         button.btn-primary {
             background-color: #3498db; color: white; padding: 12px; border-radius: 6px;
@@ -116,9 +125,11 @@
         <div id="login-screen">
             <h2>Resultados, Tablas y Saldos</h2>
             <div class="pw-wrap">
-                <input type="text" id="login-codigo" placeholder="Ingresa tu código de acceso" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                <input type="text" id="login-codigo" name="codigo" placeholder="Ingresa tu código de acceso" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
                 <button type="button" class="ojo" id="btn-ojo">🙈 Ocultar</button>
             </div>
+            <div id="lista-codigos"></div>
+            <label style="display:block; font-size:0.85em; margin-bottom:15px; color:#555;"><input type="checkbox" id="recordar" checked> Recordar mi código en este celular</label>
             <button id="btn-login" class="btn-primary">Entrar</button>
         </div>
 
@@ -262,6 +273,10 @@
         try {
             const data = await post({ accion: 'loginParticipante', codigo });
             if (data.status !== 'ok') throw new Error(data.message);
+            if ($('recordar').checked) {
+                const tipo = (codigo === data.codigoTemp) ? 'Temporada' : (codigo === data.codigoSem ? 'Semanal' : '');
+                guardarCodigo(codigo, data.nombre, tipo);
+            }
             sessionStorage.setItem('nombreUsuario', data.nombre);
             sessionStorage.setItem('codigoTemp', data.codigoTemp || "");
             sessionStorage.setItem('codigoSem', data.codigoSem || "");
@@ -277,6 +292,69 @@
         } catch (err) { alert(err.message); }
         finally { mostrarLoader(false); }
     }
+    // ---------- Códigos guardados en este celular ----------
+    const KEY_CODIGOS = 'q_codigos';
+    const LEGACY = ['q_login', 'q_codTemp', 'q_codSem'];
+    function guardarLista(l) { try { localStorage.setItem(KEY_CODIGOS, JSON.stringify(l)); } catch (e) { } }
+    function leerCodigos() {
+        let l = [];
+        try { l = JSON.parse(localStorage.getItem(KEY_CODIGOS) || '[]'); } catch (e) { l = []; }
+        if (!Array.isArray(l)) l = [];
+        try {   // incluir códigos guardados con la versión anterior
+            LEGACY.forEach(k => {
+                const v = localStorage.getItem(k);
+                if (v && !l.some(x => x.codigo === v)) l.push({ codigo: v, nombre: '', tipo: '' });
+            });
+        } catch (e) { }
+        return l;
+    }
+    function guardarCodigo(codigo, nombre, tipo) {
+        let l = leerCodigos().filter(x => x.codigo !== codigo);
+        l.unshift({ codigo, nombre: nombre || '', tipo: tipo || '' });   // el más reciente primero
+        guardarLista(l.slice(0, 8));
+        try { localStorage.setItem('q_login', codigo); } catch (e) { }
+    }
+    function borrarCodigo(codigo) {
+        guardarLista(leerCodigos().filter(x => x.codigo !== codigo));
+        try { LEGACY.forEach(k => { if (localStorage.getItem(k) === codigo) localStorage.removeItem(k); }); } catch (e) { }
+    }
+    function enmascarar(c) { return c.length <= 2 ? c : c.slice(0, 2) + '•'.repeat(Math.min(c.length - 2, 5)); }
+    function renderLista() {
+        const box = $('lista-codigos');
+        const l = leerCodigos();
+        box.innerHTML = '';
+        if (!l.length) { box.style.display = 'none'; return; }
+        const t = document.createElement('div');
+        t.className = 'cod-titulo';
+        t.textContent = 'Códigos guardados en este celular';
+        box.appendChild(t);
+        l.forEach(item => {
+            const fila = document.createElement('div');
+            fila.className = 'cod-item';
+            const sel = document.createElement('button');
+            sel.type = 'button'; sel.className = 'cod-sel';
+            const n = document.createElement('span');
+            n.className = 'cod-nombre';
+            n.textContent = item.nombre || 'Código guardado';
+            const sub = document.createElement('span');
+            sub.className = 'cod-sub';
+            sub.textContent = (item.tipo ? item.tipo + ' · ' : '') + enmascarar(item.codigo);
+            sel.appendChild(n); sel.appendChild(sub);
+            sel.onclick = () => { $('login-codigo').value = item.codigo; box.style.display = 'none'; $('btn-login').focus(); };
+            const del = document.createElement('button');
+            del.type = 'button'; del.className = 'cod-del'; del.textContent = '✕';
+            del.title = 'Quitar este código';
+            del.onclick = (e) => { e.stopPropagation(); borrarCodigo(item.codigo); renderLista(); if (leerCodigos().length) box.style.display = 'block'; };
+            fila.appendChild(sel); fila.appendChild(del);
+            box.appendChild(fila);
+        });
+        box.style.display = 'block';
+    }
+    ['focus', 'click'].forEach(ev => $('login-codigo').addEventListener(ev, renderLista));
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#lista-codigos') && e.target !== $('login-codigo')) $('lista-codigos').style.display = 'none';
+    });
+    try { const l0 = leerCodigos(); if (l0.length) $('login-codigo').value = l0[0].codigo; } catch (e) { }
     $('btn-login').onclick = login;
     $('login-codigo').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
@@ -459,4 +537,4 @@
     }
 </script>
 </body>
-</html>
+</html
